@@ -1,0 +1,50 @@
+.common{
+    text-align: center;
+    background-color: lightgrey;
+    position: absolute;
+    
+    
+}
+
+body{
+    background-color: lightgrey;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.headcenter{
+    text-align: center;
+}
+.header{
+    text-align: center;
+    bottom: 100px;
+}
+
+.mainbody {
+    top: 175px;
+    left:0px;
+    right: 0px;
+    bottom: 50px;
+    background-color: white;
+}
+
+.footer{
+    bottom: 0;
+    right: 0px;
+    left: 0px;
+    height: 50px;
+    position: fixed;
+}
+
+.foot{
+    text-align: center;
+}
+
+.website{
+    position: absolute;
+    left: 20px;
+    text-align: center;
+}
+
+.subtitle{
+    text-align: center ;
+}
+
