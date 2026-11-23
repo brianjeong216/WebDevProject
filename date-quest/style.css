@@ -511,3 +511,16 @@ body:has(#theme-picker) { padding-top: 64px; }
 .ticket-tri .t-top { padding: 0 30px; }
 .ticket-tri .t-when { border-top-color: rgba(11, 61, 92, 0.3); }
 .ticket-tri .t-top span:last-child { font-family: "Anton", Impact, sans-serif; font-size: 22px; letter-spacing: 0.04em; }
+
+/* ---------- opening page ---------- */
+.opener h1 { font-size: clamp(34px, 9vw, 48px); margin-bottom: 18px; }
+.puppy {
+  display: block;
+  width: 260px; max-width: 78%; height: auto;
+  margin: 6px auto 22px;
+  border-radius: 14px;
+  border: 6px solid #fff;
+  box-shadow: 0 12px 30px rgba(58, 42, 48, 0.18);
+  transform: rotate(-2deg);
+  animation: meme-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.1s both;
+}

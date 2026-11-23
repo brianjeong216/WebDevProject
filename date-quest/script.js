@@ -36,8 +36,8 @@ const OTHER = { emo: "💡", name: "I have a better idea", why: "Tell me. I'm li
 const THEMES = {
   classic: {
     label: "💌 Classic",
-    eyebrow: "a small question",
-    title: "Will you go on a second date with me?",
+    eyebrow: "okay, here it is",
+    title: "Will you go on a date with me?",
     sub: "Take your time. There's really only one right answer here.",
     meme: ["Me waiting for you", "🐱", "to press yes"],
     yes: "♥ Yes, I'd love to",
@@ -47,8 +47,8 @@ const THEMES = {
   },
   mtb: {
     label: "🚵 Mountain bike",
-    eyebrow: "trail report: a small question",
-    title: "Will you shred a second date with me?",
+    eyebrow: "trail report",
+    title: "Will you go on a date with me?",
     sub: "Trail difficulty: green circle. It's an easy yes.",
     meme: ["Me at the trailhead", "🚵", "waiting for you to press yes"],
     yes: "🤘 Send it (yes)",
@@ -58,8 +58,8 @@ const THEMES = {
   },
   ski: {
     label: "⛷️ Ski",
-    eyebrow: "fresh powder alert: a small question",
-    title: "Will you go on a second date with me?",
+    eyebrow: "fresh powder alert",
+    title: "Will you go on a date with me?",
     sub: "Today's conditions: 100% chance of fun, 0% chance of no.",
     meme: ["Me at the lift line", "⛷️", "waiting for you to press yes"],
     yes: "⛷️ Yes, let's send it",
@@ -69,8 +69,8 @@ const THEMES = {
   },
   tri: {
     label: "🏊 Triathlon",
-    eyebrow: "race day: a small question",
-    title: "Will you go on a second date with me?",
+    eyebrow: "race day",
+    title: "Will you go on a date with me?",
     sub: "Swim. Bike. Run. Say yes. (The 4th discipline.)",
     meme: ["Me at the finish line", "🏊🚴🏃", "waiting for you to press yes"],
     yes: "🏁 Yes, I'm in",
@@ -159,7 +159,7 @@ function themePicker() {
     CONFIG.theme = b.dataset.k;
     document.querySelectorAll(".runaway, .modal-bg").forEach((n) => n.remove());
     state.noAttempts = 0; state.pick = null;
-    applyTheme(); sync(); showAsk();
+    applyTheme(); sync(); showOpener();
   }));
   sync();
 }
@@ -194,12 +194,25 @@ function memeHTML(m) {
   return "";
 }
 
+/* ---------- 0. opening page ---------- */
+function showOpener() {
+  render(`
+    <div class="ask opener">
+      <h1>Hey ${esc(CONFIG.herName || "you")},<br />a small question…</h1>
+      <img class="puppy" src="puppy.webp" alt="A very hopeful puppy" width="360" height="480" />
+      <div class="row" style="justify-content:center">
+        <button class="btn big" id="what">What is it? 👀</button>
+      </div>
+    </div>`);
+  document.getElementById("what").onclick = showAsk;
+}
+
 /* ---------- 1. the ask ---------- */
 function showAsk() {
   const t = theme();
   render(`
     <div class="ask">
-      <p class="eyebrow">${CONFIG.herName ? `Hey ${esc(CONFIG.herName)}, ` : ""}${esc(t.eyebrow)}</p>
+      <p class="eyebrow">${esc(t.eyebrow)}</p>
       <h1>${esc(t.title)}</h1>
       <p class="sub">${esc(t.sub)}</p>
       <div class="meme-photo" role="img" aria-label="Meme: ${esc(t.meme[0])} ${esc(t.meme[2])}">
@@ -442,4 +455,4 @@ function hearts() {
 
 applyTheme();
 themePicker();
-showAsk();
+showOpener();
