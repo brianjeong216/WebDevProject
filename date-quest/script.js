@@ -19,10 +19,12 @@ const CONFIG = {
 const IDEAS = [
   { emo: "⛸️", name: "Ice skating + dairy-free hot chocolate", why: "I'll hold onto the wall. You hold the cocoa. 100% dairy-free, 0% graceful.",
     meme: ["cap", "⛸️😬", "me on the ice", "a baby deer, but taller"] },
-  { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll sushi (badly), then save Hyrule (also badly).",
-    meme: ["cap", "🗡️🍣", "it's dangerous to go alone!", "take this 🍣"] },
+  { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll our own sushi (some will fall apart), then play Zelda. I'm a casual gamer. Please be patient with me.",
+    meme: ["cap", "🍣😤", "me after rolling one (1) sushi", "time to open a restaurant"] },
   { emo: "🕹️", name: "Arcade + dairy-free dessert", why: "Loser buys dessert. Dairy-free, because I pay attention.",
     meme: ["nobody", "Me after winning ONE round of air hockey:", "\"so I'm basically a pro now\" 🕹️"] },
+  { emo: "💃", name: "Cha cha dance class (YouTube edition)", why: "Our first dance class got cancelled. Round two: YouTube is the teacher now, and YouTube can't cancel on us.",
+    meme: ["me", "\"I'll pick it up fast\"", "*watching the tutorial at 0.25x speed, still a beat behind*"] },
 ];
 const SURPRISE = { emo: "🎲", name: "Surprise me", why: "Trust the process. (The process is me.)",
   meme: ["me", "\"Surprise me\"", "*is already planning 4 backup plans*"] };
@@ -53,8 +55,8 @@ const THEME_SCREENS = {
   retro: {
     opener: { eyebrow: "🎮 Player 2 detected", btn: "▶ Press start" },
     popup: { badge: "⭐ LEVEL UP! ⭐", head: "Yay! 💖", extra: "+1000 XP · Achievement: Said Yes 🏆", btn: "▶ Continue" },
-    pick: { eyebrow: "🕹️ Select your quest · Date #2", title: "Choose your quest.", sub: "Three quests. One Player 2 (you). Choose wisely.",
-      next: "▶ Start quest", badges: ["⭐ Easy", "⭐⭐ Normal", "⭐⭐⭐ Hard"] },
+    pick: { eyebrow: "🕹️ Select your quest · Date #2", title: "Choose your quest.", sub: "Four quests. One Player 2 (you). Choose wisely.",
+      next: "▶ Start quest", badges: ["⭐ Easy", "⭐⭐ Normal", "⭐⭐⭐ Hard", "👑 Boss level"] },
     ticket: { heading: "Here's your save file.", left: "SAVE FILE 01", right: "P1 + P2", fine: "Progress saved. Snacks count as power-ups." },
     done: { emo: "🏆", head: "Quest accepted!", bye: "See you Tuesday, Player 2 💖" },
     sms: "🎮",
