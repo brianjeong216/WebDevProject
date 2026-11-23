@@ -22,7 +22,7 @@ const IDEAS = [
   { emo: "🕹️", name: "Arcade + dairy-free dessert", why: "Loser buys dessert. Dairy-free, because I pay attention.",
     meme: ["nobody", "Me after winning ONE round of air hockey:", "\"so I'm basically a pro now\" 🕹️"] },
   { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll our own sushi (some will fall apart), then play Zelda. I'm a casual gamer. Please be patient with me.",
-    meme: ["cap", "🍣😤", "me after rolling one (1) sushi", "time to open a restaurant"] },
+    meme: ["drake", "Paying $40 for sushi", "Making our own sushi (looks bad, tastes great)"] },
   { emo: "💃", name: "Cha cha dance class (YouTube edition)", why: "Our first dance class got cancelled. Round two: YouTube is the teacher now, and YouTube can't cancel on us.",
     meme: ["me", "\"I'll pick it up fast\"", "*watching the tutorial at 0.25x speed, still a beat behind*"] },
 ];
