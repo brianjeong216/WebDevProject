@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>incoming_request.exe</title>
+  <meta name="description" content="You have 1 new pull request. Merge? 💌" />
+  <meta property="og:title" content="incoming_request.exe 💌" />
+  <meta property="og:description" content="You have 1 new pull request. Review required." />
+  <meta name="theme-color" content="#0d0b14" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="crt" aria-hidden="true"></div>
+
+  <main class="window" id="window">
+    <header class="titlebar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="title">~/date-planner — zsh</span>
+      <span class="progress" id="progress" aria-live="polite"></span>
+    </header>
+
+    <section class="terminal" id="terminal" aria-live="polite">
+      <div id="output"></div>
+      <div id="input-area"></div>
+    </section>
+
+    <footer class="statusbar">
+      <span>⎇ main</span>
+      <span id="status-msg">tap anywhere to skip typing</span>
+      <span>UTF-8 ♥</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
