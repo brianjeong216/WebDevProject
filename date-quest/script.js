@@ -179,6 +179,7 @@ const QUESTIONS = [
 /* ---------- date ideas ---------- */
 const IDEAS = [
   { name: "Luminaria at Thanksgiving Point", where: "Lehi", why: "Millions of Christmas lights. Open until 9, so it works after work.", tags: ["cozy", "artsy", "adventure", "nature"], weather: "out" },
+  { name: "Christmas tree lot adventure", where: "a local tree lot", why: "Find the most tragic Charlie Brown tree, then the perfect one. Hot cocoa after.", tags: ["cozy", "adventure", "nature", "artsy"], weather: "mix" },
   { name: "Ice skating at Peaks Ice Arena", where: "Provo", why: "I'll hold onto the wall. You hold onto your dignity.", tags: ["active", "adventure", "sports"], weather: "in" },
   { name: "Bowling + arcade at Nickel City", where: "Orem", why: "Loser buys the post-game snacks. No refunds.", tags: ["nerdy", "active", "games"], competitive: true, weather: "in", social: "crowd" },
   { name: "Rock climbing at The Quarry", where: "Provo", why: "I'll belay, you judge my form.", tags: ["active", "adventure", "sports"], weather: "in" },
