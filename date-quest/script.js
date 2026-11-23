@@ -45,7 +45,7 @@ const THEMES = {
     sub: "Choose wisely. There's only one correct answer. (No continues.)",
     meme: ["Me waiting for you", "🐱", "to press yes"],
     memeImg: "cat-meme.jpg",
-    yes: "♥ Yes!",
+    yes: "Yes!",
     no: ["No", "Last chance", "GAME OVER?", "Insert coin to say no 🪙", "Wrong button combo", "Glitch detected 👾",
       "Error: 'No' not found", "Respawning…", "Press A for yes", "Cheat code: ↑↑↓↓ YES", "Player 2 can't escape"],
     yay: "⭐",
@@ -57,13 +57,13 @@ const theme = () => THEMES.retro;
 const THEME_SCREENS = {
   retro: {
     opener: { eyebrow: "🎮 Player 2 detected", btn: "▶ Press start" },
-    popup: { badge: "⭐ LEVEL UP! ⭐", head: "Yay! 💖", extra: "+1000 XP · Achievement: Said Yes 🏆", btn: "▶ Continue" },
+    popup: { badge: "⭐ LEVEL UP! ⭐", head: "Yay!", extra: "+1000 XP · Achievement: Said Yes 🏆", btn: "▶ Continue" },
     pick: { eyebrow: "🕹️ Select your quest · Date #2", title: "Choose your quest.", sub: "Four quests. One Player 2 (you). Choose wisely.",
       next: "▶ Start quest", badges: ["⭐ Easy", "⭐⭐ Normal", "⭐⭐⭐ Hard", "🔥 Extreme"] },
     ticket: { heading: "Here's your save file.", left: "SAVE FILE 01", right: "P1 + P2", fine: "Progress saved. Snacks count as power-ups." },
-    done: { emo: "🏆", head: "Quest accepted!", bye: "See you Tuesday, Player 2 💖" },
+    done: { emo: "🏆", head: "Quest accepted!", bye: "See you Tuesday, Player 2 🎮" },
     sms: "🎮",
-    confetti: ["⭐", "💖", "🪙", "👾", "✨"],
+    confetti: ["⭐", "🎉", "🪙", "👾", "✨"],
     ambient: { chars: ["✦", "+", "·", "✧"], dir: "twinkle", count: 46 },
   },
 };
@@ -115,7 +115,7 @@ function memeHTML(m) {
   if (t === "drake") return `<div class="meme drake">
       <div class="dr no"><span class="dface">🙅</span><span>${esc(a)}</span></div>
       <div class="dr yes"><span class="dface">😌👉</span><span>${esc(b)}</span></div></div>`;
-  if (t === "nobody") return `<div class="meme tweet"><div class="who"><span class="av">💌</span><b>Very Real Tweet</b> <span class="handle">@date2</span></div>
+  if (t === "nobody") return `<div class="meme tweet"><div class="who"><span class="av">🎮</span><b>Very Real Tweet</b> <span class="handle">@date2</span></div>
       <p>Nobody:</p><p>Absolutely nobody:</p><p>${esc(a)} ${esc(b)}</p></div>`;
   if (t === "me") return `<div class="meme tweet"><p><b>Me:</b> ${esc(a)}</p><p><b>Also me:</b> ${esc(b)}</p></div>`;
   if (t === "brain") return `<div class="meme brain">${a.map((line, i) => `<div class="br lvl${i}"><span>${esc(line)}</span><span class="bemo">${["🧠", "🧠✨", "🤯🌌"][i]}</span></div>`).join("")}</div>`;
@@ -213,7 +213,7 @@ function showYay() {
       ${screens().popup.badge ? `<div class="m-badge">${esc(screens().popup.badge)}</div>` : ""}
       <div class="big-emoji">${theme().yay}</div>
       <h2 id="yay">${esc(screens().popup.head)}</h2>
-      <p class="small" style="font-size:17px;color:var(--ink)">I'm so glad u said yes 🥰</p>
+      <p class="small" style="font-size:17px;color:var(--ink)">I'm so glad u said yes 😄</p>
       ${screens().popup.extra ? `<p class="m-extra">${esc(screens().popup.extra)}</p>` : ""}
       <button class="btn" id="cont">${esc(screens().popup.btn)}</button>
     </div>`;

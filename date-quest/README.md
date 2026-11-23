@@ -1,7 +1,7 @@
-# Date invitation 💌 (retro arcade style)
+# Date invitation (retro arcade style)
 
 1. "Want to go out with me?": the No button runs away.
-2. Yes shows a "Yay 💖! This is the best decision you've ever made." pop-up.
+2. Yes shows a "Yay! I'm so glad u said yes" pop-up.
 3. She picks a date idea (each one shows a meme), or "Surprise me", or types her own idea.
 4. She gets a ticket for Tuesday, Nov 24 · 7:00pm and taps **Send**, which emails you her pick, her note, and how many times she tried to press No.
 
