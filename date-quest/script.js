@@ -5,10 +5,10 @@
    ========================================================== */
 const CONFIG = {
   myName: "Brian",
-  herName: "",                       // e.g. "Sarah" → used in the greeting
+  herName: "Kayler",
+  myPhone: "+14694346426",           // the Send button opens a text to this number
   when: "Tuesday, Nov 24 · 7:00pm",
-  // Free key from https://web3forms.com (enter your email, the key is emailed to you).
-  // Her answer gets emailed to you when she taps Send. Your email address never appears in this code.
+  // Optional: free key from https://web3forms.com to ALSO get an email when she taps Send.
   web3formsKey: "",
 };
 
@@ -16,18 +16,12 @@ const CONFIG = {
    meme formats: ["cap", emoji, top, bottom] · ["drake", nah, yeah]
                  ["nobody", who, what] · ["me", me, alsoMe] · ["brain", [a, b, c]]  */
 const IDEAS = [
-  { emo: "🎄", name: "Luminaria at Thanksgiving Point", why: "Millions of lights in Lehi. I will pretend I'm not cold.",
-    meme: ["cap", "🥶✨", "it's 30 degrees outside", "but the lights tho"] },
-  { emo: "🌲", name: "Pick out a Christmas tree", why: "We find the most tragic Charlie Brown tree first. Then a real one.",
-    meme: ["drake", "Perfect fake trees", "A tree with emotional damage 🌲"] },
-  { emo: "⛸️", name: "Ice skating", why: "I'll hold onto the wall. You hold onto your dignity.",
+  { emo: "⛸️", name: "Ice skating + dairy-free hot chocolate", why: "I'll hold onto the wall. You hold the cocoa. 100% dairy-free, 0% graceful.",
     meme: ["cap", "⛸️😬", "me on the ice", "a baby deer, but taller"] },
-  { emo: "🔐", name: "Escape room", why: "Pair programming, but we're locked in a room.",
-    meme: ["brain", ["Fixing bugs at work", "Solving puzzles for fun", "Escaping a room together in 60 min"]] },
-  { emo: "🎳", name: "Bowling + arcade", why: "Loser buys the snacks. No refunds.",
-    meme: ["nobody", "Me after ONE strike:", "\"so I'm basically a pro now\" 🎳"] },
-  { emo: "☕", name: "Hot cocoa + a drive to see the lights", why: "Heated seats, good playlist, great view.",
-    meme: ["cap", "☕🚗", "heated seats + a good playlist", "elite date"] },
+  { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll sushi (badly), then save Hyrule (also badly).",
+    meme: ["cap", "🗡️🍣", "it's dangerous to go alone!", "take this 🍣"] },
+  { emo: "🕹️", name: "Arcade + dairy-free dessert", why: "Loser buys dessert. Dairy-free, because I pay attention.",
+    meme: ["nobody", "Me after winning ONE round of air hockey:", "\"so I'm basically a pro now\" 🕹️"] },
 ];
 const SURPRISE = { emo: "🎲", name: "Surprise me", why: "Trust the process. (The process is me.)",
   meme: ["me", "\"Surprise me\"", "*is already planning 4 backup plans*"] };
@@ -148,7 +142,7 @@ function showPick() {
   render(`
     <p class="eyebrow">🎟️ Date #2 · ${esc(CONFIG.when)}</p>
     <h2>Choose our adventure.</h2>
-    <p class="sub">I have some ideas. You have final say. (This is called a healthy relationship.)</p>
+    <p class="sub">I have a few ideas. You have final say. (This is called a healthy relationship.)</p>
     <div class="options">${all.map((o, i) => `
       <button class="opt" data-i="${i}">
         <span class="emo">${o.emo}</span>
@@ -160,7 +154,7 @@ function showPick() {
     </div>
     <div id="meme"></div>
     <label class="eyebrow" for="note" style="display:block;margin-top:22px">Anything I should know? (optional)</label>
-    <textarea id="note" class="field" rows="2" maxlength="300" placeholder="Allergies, when you get off work, hot takes…"></textarea>
+    <textarea id="note" class="field" rows="2" maxlength="300" placeholder="When you get off work, cravings, hot takes…"></textarea>
     <div class="row end"><button class="btn" id="next" disabled>Lock it in →</button></div>
   `);
   const opts = [...$screen.querySelectorAll(".opt")];
@@ -181,7 +175,10 @@ function showPick() {
     btn.disabled = !valid();
     if (state.pick === OTHER) other.focus();
   };
-  opts.forEach((o, i) => (o.onclick = () => select(i)));
+  opts.forEach((o, i) => (o.onclick = () => {
+    select(i);
+    if (state.pick !== OTHER) setTimeout(() => memeBox.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" }), 80);
+  }));
   other.oninput = () => { state.otherIdea = other.value; btn.disabled = !valid(); };
   if (state.pick) select(all.indexOf(state.pick));
   btn.onclick = () => {
@@ -192,7 +189,7 @@ function showPick() {
 }
 
 /* ---------- 4. ticket + send ---------- */
-const activity = () => (state.pick === OTHER ? `Her idea: ${state.otherIdea}` : state.pick.name);
+const activity = () => (state.pick === OTHER ? state.otherIdea : state.pick.name);
 
 function showTicket() {
   render(`
@@ -206,7 +203,7 @@ function showTicket() {
       ${state.note ? `<div class="t-note">“${esc(state.note)}”</div>` : ""}
       <div class="t-fine">Non-refundable. Non-transferable. Snacks included.</div>
     </div>
-    <p class="sub" style="margin-top:18px">Tap send and ${esc(CONFIG.myName)} gets notified immediately. ${esc(CONFIG.myName)} will act cool about it. ${esc(CONFIG.myName)} will not be cool about it.</p>
+    <p class="sub" style="margin-top:18px">Tap below and a text to ${esc(CONFIG.myName)} pops up, already written. Just hit send. ${esc(CONFIG.myName)} will act cool about it. ${esc(CONFIG.myName)} will not be cool about it.</p>
     <div class="row">
       <button class="btn" id="send">💌 Send to ${esc(CONFIG.myName)}</button>
       <button class="btn ghost" id="back">← Change pick</button>
@@ -219,24 +216,24 @@ function showTicket() {
 
 function summaryText() {
   return [
-    `💌 She said YES to date #2!`,
+    `💌 I said YES to date #2!`,
     ``,
     `When: ${CONFIG.when}`,
-    `Pick: ${activity()}`,
+    `We're doing: ${activity()}`,
     `Note: ${state.note || "(none)"}`,
-    `Times she tried to press "No": ${state.noAttempts}`,
+    `Times I tried to press "No": ${state.noAttempts} ${state.noAttempts ? "(it ran away 🙄)" : "(zero. obviously.)"}`,
   ].join("\n");
 }
 
+function smsLink() {
+  const sep = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? "&" : "?";
+  return `sms:${CONFIG.myPhone}${sep}body=${encodeURIComponent(summaryText())}`;
+}
+
 async function send() {
-  const btn = document.getElementById("send");
-  const err = document.getElementById("err");
-  btn.disabled = true;
-  btn.textContent = "Sending…";
-  err.textContent = "";
-  try {
-    if (!CONFIG.web3formsKey) throw new Error("no key");
-    const res = await fetch("https://api.web3forms.com/submit", {
+  // optional email copy; never blocks the text
+  if (CONFIG.web3formsKey) {
+    fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -245,18 +242,10 @@ async function send() {
         from_name: "Date #2 Invitation",
         message: summaryText(),
       }),
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message || "failed");
-    showDone();
-  } catch {
-    btn.disabled = false;
-    btn.textContent = `💌 Send to ${CONFIG.myName}`;
-    const copied = await copyText(summaryText());
-    err.textContent = copied
-      ? `Hmm, the send didn't go through. I copied your answer, so just paste it in a text to ${CONFIG.myName} 💬`
-      : `Hmm, the send didn't go through. Screenshot the ticket and text it to ${CONFIG.myName} 📸`;
+    }).catch(() => {});
   }
+  showDone();
+  window.location.href = smsLink();
 }
 
 function showDone() {
@@ -264,12 +253,23 @@ function showDone() {
   render(`
     <div class="ask">
       <div class="big-emoji">🕺</div>
-      <h1>Sent!</h1>
-      <p class="sub">${esc(CONFIG.myName)} has been notified and is currently doing a very embarrassing happy dance.</p>
+      <h1>Almost there!</h1>
+      <p class="sub">Your text to ${esc(CONFIG.myName)} is ready in Messages. Hit send and ${esc(CONFIG.myName)} will begin a very embarrassing happy dance.</p>
       <div class="when">🎟️ ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
-      <p class="sub">See you Tuesday 💖</p>
+      <p class="sub">Messages didn't open?</p>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="${esc(smsLink())}">💬 Open Messages</a>
+        <button class="btn soft" id="copy">Copy text</button>
+      </div>
+      <p class="error" id="err"></p>
+      <p class="sub" style="margin-top:22px">See you Tuesday 💖</p>
     </div>
   `);
+  document.getElementById("copy").onclick = async () => {
+    document.getElementById("err").textContent = (await copyText(summaryText()))
+      ? "Copied! Paste it in a text to " + CONFIG.myName + " 💬"
+      : "Couldn't copy. A screenshot works too 📸";
+  };
 }
 
 /* ---------- helpers ---------- */

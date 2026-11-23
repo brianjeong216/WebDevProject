@@ -351,3 +351,4 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
 .t-when { margin-top: 8px; font-weight: 500; padding-top: 10px; border-top: 2px dashed rgba(255, 255, 255, 0.5); }
 .t-note { margin-top: 8px; font-style: italic; opacity: 0.95; font-size: 15px; }
 .t-fine { margin-top: 12px; font-size: 11.5px; opacity: 0.8; }
+a.btn { display: inline-block; text-decoration: none; }
