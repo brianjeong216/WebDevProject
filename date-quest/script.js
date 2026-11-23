@@ -276,7 +276,7 @@ function showPick() {
 }
 
 /* ---------- 4. ticket + send ---------- */
-const activity = () => (state.pick === OTHER ? state.otherIdea : state.pick.name);
+const activity = () => state.receipt ? state.receipt.q : (state.pick === OTHER ? state.otherIdea : state.pick.name);
 
 function showTicket() {
   render(`
@@ -290,81 +290,124 @@ function showTicket() {
       ${state.note ? `<div class="t-note">“${esc(state.note)}”</div>` : ""}
       <div class="t-fine">${esc(screens().ticket.fine)}</div>
     </div>
-    <p class="sub" style="margin-top:18px">Tap below and a text to ${esc(CONFIG.myName)} pops up, already written. Just hit send. ${esc(CONFIG.myName)} will act cool about it. ${esc(CONFIG.myName)} will not be cool about it.</p>
+    <p class="sub" style="margin-top:18px">Looks good? Hit next to lock it in.</p>
     <div class="row">
-      <button class="btn" id="send">${screens().sms} Send to ${esc(CONFIG.myName)}</button>
+      <button class="btn" id="next">Next ▶</button>
       <button class="btn ghost" id="back">← Change pick</button>
     </div>
-    <p class="error" id="err"></p>
   `);
   document.getElementById("back").onclick = showPick;
-  document.getElementById("send").onclick = send;
+  document.getElementById("next").onclick = showDone;
 }
+
+/* ---------- save file (receipt link Brian opens) ---------- */
+function pickBadge() {
+  const i = IDEAS.indexOf(state.pick);
+  return i >= 0 ? screens().pick.badges[i] || "" : "";
+}
+function encodeSave(obj) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function decodeSave(str) {
+  try {
+    const b64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    const d = JSON.parse(decodeURIComponent(escape(atob(b64))));
+    return d && typeof d.q === "string" ? d : null;
+  } catch { return null; }
+}
+function receiptURL() {
+  const data = { q: activity(), e: state.pick.emo, b: pickBadge(), n: state.note || "", x: state.noAttempts, t: Date.now() };
+  return `${location.origin}${location.pathname}?save=${encodeSave(data)}`;
+}
+const smsText = () => `${screens().sms} Quest complete! Open my save file 👉 ${receiptURL()}`;
 
 function summaryText() {
   return [
-    `${screens().sms} I said YES to date #2!`,
+    `${screens().sms} ${CONFIG.herName || "She"} said YES!`,
     ``,
     `When: ${CONFIG.when}`,
-    `We're doing: ${activity()}`,
+    `Quest: ${activity()}`,
     `Note: ${state.note || "(none)"}`,
-    `Times I tried to press "No": ${state.noAttempts} ${state.noAttempts ? "(it ran away 🙄)" : "(zero. obviously.)"}`,
+    `Times she tried to press "No": ${state.noAttempts}`,
   ].join("\n");
 }
 
 function smsLink() {
   const sep = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? "&" : "?";
-  return `sms:${CONFIG.myPhone}${sep}body=${encodeURIComponent(summaryText())}`;
+  return `sms:${CONFIG.myPhone}${sep}body=${encodeURIComponent(smsText())}`;
 }
 
-async function send() {
-  // optional email copy; never blocks the text
-  if (CONFIG.web3formsKey) {
-    fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        access_key: CONFIG.web3formsKey,
-        subject: `💌 Date #2: ${activity()}`,
-        from_name: "Date #2 Invitation",
-        message: summaryText(),
-      }),
-    }).catch(() => {});
-  }
-  showDone();
-  window.location.href = smsLink();
+function notifyByEmail() {
+  // optional email copy (only if a Web3Forms key is set); never blocks the text
+  if (!CONFIG.web3formsKey) return;
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ access_key: CONFIG.web3formsKey, subject: `🎮 Quest: ${activity()}`, from_name: "Date Invitation", message: summaryText() }),
+  }).catch(() => {});
 }
 
+/* ---------- 5. quest accepted: calendar + send ---------- */
 function showDone() {
   hearts();
   render(`
     <div class="ask">
       <div class="big-emoji">${screens().done.emo}</div>
       <h1>${esc(screens().done.head)}</h1>
-      <p class="sub">Your text to ${esc(CONFIG.myName)} is ready in Messages. Hit send and ${esc(CONFIG.myName)} will begin a very embarrassing happy dance.</p>
-      <div class="when">🎟️ ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
+      <div class="when">${state.pick.emo} ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
       <p class="sub">💾 Save it to your calendar:</p>
       <div class="row" style="justify-content:center">
         <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
         <button class="btn" id="ical">🍎 Apple Calendar</button>
       </div>
-      <p class="sub" style="margin-top:22px">Messages didn't open?</p>
+      <p class="sub" style="margin-top:26px">📨 Final step: send your save file to ${esc(CONFIG.myName)}.</p>
       <div class="row" style="justify-content:center">
-        <a class="btn" href="${esc(smsLink())}">💬 Open Messages</a>
-        <button class="btn soft" id="copy">Copy text</button>
+        <a class="btn big blink" id="send" href="${esc(smsLink())}">${screens().sms} Send to ${esc(CONFIG.myName)}</a>
       </div>
+      <p class="sub" style="margin-top:14px;font-size:18px">Messages didn't open? <button class="linkish" id="copy">Copy the link instead</button></p>
       <p class="error" id="err"></p>
       <p class="sub" style="margin-top:22px">${esc(screens().done.bye)}</p>
     </div>
   `);
   document.getElementById("ical").onclick = downloadICS;
+  document.getElementById("send").addEventListener("click", notifyByEmail);
   document.getElementById("copy").onclick = async () => {
-    document.getElementById("err").textContent = (await copyText(summaryText()))
+    document.getElementById("err").textContent = (await copyText(smsText()))
       ? "Copied! Paste it in a text to " + CONFIG.myName + " 💬"
       : "Couldn't copy. A screenshot works too 📸";
   };
 }
 
+/* ---------- the save file Brian sees when he opens her link ---------- */
+function showReceipt(d) {
+  state.receipt = d;
+  state.note = d.n;
+  state.noAttempts = d.x;
+  state.pick = { emo: d.e };
+  const done = d.t ? new Date(d.t).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+  hearts();
+  render(`
+    <div class="ask">
+      <p class="eyebrow">📜 Save file loaded</p>
+      <h1>${esc(CONFIG.herName || "Player 2")} said YES! 🎉</h1>
+      <div class="ticket" style="margin-top:18px">
+        <div class="t-top"><span>SAVE FILE 01</span><span>P1 + P2</span></div>
+        <div class="t-emo">${esc(d.e || "🎮")}</div>
+        ${d.b ? `<div><span class="diff">${esc(d.b)}</span></div>` : ""}
+        <div class="t-name">${esc(d.q)}</div>
+        <div class="t-when">${esc(CONFIG.when)}</div>
+        ${d.n ? `<div class="t-note">“${esc(d.n)}”</div>` : ""}
+        <div class="t-fine">Attempts to press "No": ${Number(d.x) || 0}${Number(d.x) ? " (it ran away 😎)" : " (zero. legend.)"}${done ? `<br />Completed: ${esc(done)}` : ""}</div>
+      </div>
+      <p class="sub" style="margin-top:18px">Add it to your calendar:</p>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
+        <button class="btn" id="ical">🍎 Apple Calendar</button>
+      </div>
+    </div>
+  `);
+  document.getElementById("ical").onclick = downloadICS;
+}
 
 /* ---------- calendar ---------- */
 function eventTimes() {
@@ -373,7 +416,7 @@ function eventTimes() {
   const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); // 20261125T020000Z
   return { start: fmt(start), end: fmt(end) };
 }
-const eventTitle = () => `🎮 Date with ${CONFIG.myName}: ${activity()}`;
+const eventTitle = () => `🎮 Date with ${state.receipt ? CONFIG.herName || "Kayler" : CONFIG.myName}: ${activity()}`;
 const eventDetails = () => [
   `Quest: ${activity()}`,
   state.note ? `Note: ${state.note}` : "",
@@ -388,7 +431,7 @@ function googleCalLink() {
 
 function downloadICS() {
   const { start, end } = eventTimes();
-  const escICS = (t) => t.replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const escICS = (t) => t.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
   const ics = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//date-quest//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
     "BEGIN:VEVENT",
@@ -442,4 +485,9 @@ function hearts() {
 }
 
 applyTheme();
-showOpener();
+{
+  const saved = new URLSearchParams(location.search).get("save");
+  const data = saved && decodeSave(saved);
+  if (data) showReceipt(data);
+  else showOpener();
+}

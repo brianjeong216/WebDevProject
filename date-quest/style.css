@@ -537,3 +537,5 @@ a.btn { display: inline-block; text-decoration: none; }
 @media (max-width: 600px) {
   .ask-btns { flex-direction: column; gap: 44px; margin-top: 30px; }
 }
+
+.linkish { font: inherit; background: none; border: 0; padding: 0; color: var(--accent-ink); text-decoration: underline; cursor: pointer; }
