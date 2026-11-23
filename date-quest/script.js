@@ -45,7 +45,7 @@ const THEMES = {
     sub: "Choose wisely. There's only one correct answer. (No continues.)",
     meme: ["Me waiting for you", "🐱", "to press yes"],
     memeImg: "cat-meme.jpg",
-    yes: "♥ Yes, I'd love to",
+    yes: "♥ Yes!",
     no: ["No", "Last chance", "GAME OVER?", "Insert coin to say no 🪙", "Wrong button combo", "Glitch detected 👾",
       "Error: 'No' not found", "Respawning…", "Press A for yes", "Cheat code: ↑↑↓↓ YES", "Player 2 can't escape"],
     yay: "⭐",
