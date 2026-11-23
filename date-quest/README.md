@@ -1,7 +1,7 @@
 # date_planner.exe 💌
 
-A retro-terminal "date-planning questionnaire": 12 coding-themed questions with witty replies,
-a fake build step, and a result card with her "date profile" plus 3 matched date ideas.
+A clean, playful date-planning quiz: 12 witty questions (one per screen) with funny replies,
+a short loading screen, and a result card with her "date profile" plus 3 matched date ideas.
 
 ## Personalize
 Edit the `CONFIG` block at the top of `script.js`:
