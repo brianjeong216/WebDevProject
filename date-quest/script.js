@@ -7,7 +7,8 @@ const CONFIG = {
   myName: "Brian",   // who she sends the results to
   herName: "",       // e.g. "Sarah" → she gets a special welcome when she types it
   myPhone: "",       // e.g. "15551234567" → the "Send" button opens a text to you
-  city: "",          // e.g. "Provo" → shows up above the date ideas
+  city: "Utah County",
+  dateLabel: "Tuesday, Nov 24 · after 6:30pm",
 };
 
 /* ---------- questions ---------- */
@@ -58,19 +59,17 @@ const QUESTIONS = [
     ],
   },
   {
-    title: "Best time for a date?",
-    sub: "Pick your peak hours.",
-    label: "time of day",
+    title: "It's late November in Utah. How cold-proof are you?",
+    sub: "Be honest. I've seen how people dress in this state.",
+    label: "cold tolerance",
     type: "choice",
     options: [
-      { emo: "☕", label: "Morning", hint: "coffee is my personality", set: { time: "morning" }, fx: { cozy: 1 },
-        reply: "An early riser. I'm fixing my sleep schedule as we speak." },
-      { emo: "☀️", label: "Afternoon", hint: "peak energy, minimal yawning", set: { time: "afternoon" }, fx: { active: 1 },
-        reply: "Sensible. Strategic. Well-rested." },
-      { emo: "🌅", label: "Golden hour", hint: "for the aesthetics", set: { time: "evening" }, fx: { artsy: 1 },
-        reply: "Good lighting is a valid requirement. Agreed." },
-      { emo: "🌙", label: "Late night", hint: "certified night owl", set: { time: "night" }, fx: { adventure: 1 },
-        reply: "Night owl detected. The best ideas happen after 11pm anyway." },
+      { emo: "🧤", label: "Bundle me up, outside is fine", set: { weather: "out" }, fx: { adventure: 1, active: 1 },
+        reply: "A winter warrior. I respect it. I'll bring hand warmers anyway." },
+      { emo: "🦎", label: "Indoors please, I'm basically a lizard", set: { weather: "in" }, fx: { cozy: 1 },
+        reply: "Cold-blooded, warm-hearted. Heated buildings only. Noted." },
+      { emo: "☕", label: "Outside a little, then hot cocoa immediately", set: { weather: "mix" }, fx: { cozy: 1, foodie: 1 },
+        reply: "The perfect compromise. Cocoa is non-negotiable." },
     ],
   },
   {
@@ -179,31 +178,23 @@ const QUESTIONS = [
 
 /* ---------- date ideas ---------- */
 const IDEAS = [
-  { name: "Sunset hike to a viewpoint", why: "Bring snacks, earn the view.", tags: ["active", "adventure", "nature"], time: ["afternoon", "evening"] },
-  { name: "Arcade night", why: "Loser buys boba. No refunds.", tags: ["nerdy", "active", "games"], time: ["evening", "night"], competitive: true, social: "crowd" },
-  { name: "Board game café", why: "We'll find out who's competitive real fast.", tags: ["nerdy", "cozy", "games", "puzzles"], competitive: true },
-  { name: "Escape room", why: "The ultimate teamwork test.", tags: ["nerdy", "adventure", "puzzles"], competitive: true },
-  { name: "Art museum + make up backstories for the paintings", why: "The more dramatic, the better.", tags: ["artsy", "art"], time: ["morning", "afternoon"], social: "quiet" },
-  { name: "Bookstore date", why: "Pick a book for each other under $10.", tags: ["artsy", "cozy", "books"], social: "quiet" },
-  { name: "Pottery or painting class", why: "Guaranteed to be terrible at it together.", tags: ["artsy", "adventure", "art"] },
-  { name: "Cook a dish neither of us has made", why: "Worst case, we order takeout and laugh.", tags: ["foodie", "cozy", "cooking"], time: ["evening", "night"], social: "quiet" },
-  { name: "Farmers market / food truck hopping", why: "Try one thing from every stand.", tags: ["foodie", "adventure"], time: ["morning", "afternoon"], social: "crowd" },
-  { name: "Coffee shop + build a tiny ridiculous website together", why: "Ship it before the coffee gets cold.", tags: ["nerdy", "cozy"], time: ["morning", "afternoon"], social: "quiet" },
-  { name: "Two-person hackathon", why: "Build the dumbest app possible in 2 hours.", tags: ["nerdy", "adventure"], time: ["afternoon", "night"] },
-  { name: "Picnic in the park", why: "I'll bring the food, you bring the playlist.", tags: ["cozy", "artsy", "nature", "music"], time: ["afternoon", "evening"], social: "quiet" },
-  { name: "Stargazing with blankets & snacks", why: "I'll pretend I know the constellations.", tags: ["cozy", "adventure", "nature"], time: ["night"], social: "quiet" },
-  { name: "Night market or food festival", why: "Eat our way through the whole thing.", tags: ["foodie", "adventure"], time: ["evening", "night"], social: "crowd" },
-  { name: "Movie night + we rate the trailers", why: "Strict scoring. No mercy.", tags: ["cozy", "movies"], time: ["evening", "night"], social: "quiet" },
-  { name: "Mini golf or bowling", why: "Trash talk is mandatory.", tags: ["active", "nerdy", "sports", "games"], competitive: true },
-  { name: "Rock climbing gym", why: "I'll belay, you judge my form.", tags: ["active", "adventure", "sports"] },
-  { name: "Kayaking or paddleboarding", why: "Whoever falls in first buys lunch.", tags: ["active", "adventure", "nature", "sports"], time: ["morning", "afternoon"] },
-  { name: "Live music or an open mic", why: "We rate every act out of 10.", tags: ["artsy", "adventure", "music"], time: ["evening", "night"], social: "crowd" },
-  { name: "Trivia night", why: "Team name: Ctrl+Alt+Defeat.", tags: ["nerdy", "games", "puzzles"], time: ["evening", "night"], competitive: true, social: "crowd" },
-  { name: "Thrift store challenge", why: "$15 to build each other an outfit.", tags: ["artsy", "adventure"], time: ["afternoon"] },
-  { name: "Zoo or aquarium", why: "We each pick a favorite animal and defend it.", tags: ["cozy", "adventure", "animals", "nature"], time: ["morning", "afternoon"] },
-  { name: "Scenic drive + a shared playlist", why: "We each add 5 songs. No skipping.", tags: ["cozy", "adventure", "music", "travel"], social: "quiet" },
-  { name: "Day trip to a town neither of us knows", why: "No plan, just vibes and a map.", tags: ["adventure", "travel", "foodie"], time: ["morning", "afternoon"] },
-  { name: "Anime or show marathon + homemade snacks", why: "You pick the show, I'll pick the snacks.", tags: ["cozy", "anime", "movies", "cooking"], time: ["evening", "night"], social: "quiet" },
+  { name: "Luminaria at Thanksgiving Point", where: "Lehi", why: "Millions of Christmas lights. Open until 9, so it works after work.", tags: ["cozy", "artsy", "adventure", "nature"], weather: "out" },
+  { name: "Ice skating at Peaks Ice Arena", where: "Provo", why: "I'll hold onto the wall. You hold onto your dignity.", tags: ["active", "adventure", "sports"], weather: "in" },
+  { name: "Bowling + arcade at Nickel City", where: "Orem", why: "Loser buys the post-game snacks. No refunds.", tags: ["nerdy", "active", "games"], competitive: true, weather: "in", social: "crowd" },
+  { name: "Rock climbing at The Quarry", where: "Provo", why: "I'll belay, you judge my form.", tags: ["active", "adventure", "sports"], weather: "in" },
+  { name: "Private karaoke room at Heart & Seoul", where: "Provo", why: "Duets are mandatory. Talent is optional.", tags: ["adventure", "music", "artsy"], weather: "in", social: "quiet" },
+  { name: "Couples escape room at The Escape Date", where: "Pleasant Grove", why: "The ultimate teamwork test. Pair programming, but locked in.", tags: ["nerdy", "adventure", "puzzles"], competitive: true, weather: "in", social: "quiet" },
+  { name: "VR arcade at VR Junkies", where: "Orem", why: "Zombies, space, or rhythm games. I will scream.", tags: ["nerdy", "games", "adventure"], competitive: true, weather: "in" },
+  { name: "Roller skating at Classic Skate", where: "Orem", why: "Retro lights, loud music, questionable balance.", tags: ["active", "music", "adventure"], weather: "in", social: "crowd" },
+  { name: "Indoor surfing + arcade at Provo Beach", where: "Provo", why: "Beach day in November. Wipeouts will be filmed.", tags: ["active", "adventure", "sports", "games"], weather: "in", social: "crowd" },
+  { name: "A show at Hale Center Theater", where: "Orem", why: "Dress up a little, judge the costumes a lot.", tags: ["artsy", "music"], weather: "in" },
+  { name: "Hot cocoa + a drive to see the valley lights", where: "Utah County", why: "Heated seats, good playlist, great view.", tags: ["cozy", "music", "adventure"], weather: "mix", social: "quiet" },
+  { name: "Cook dinner together", where: "my kitchen", why: "Worst case, we order takeout and laugh about it.", tags: ["foodie", "cozy", "cooking"], weather: "in", social: "quiet" },
+  { name: "Board games + hot chocolate", where: "a cozy café or my place", why: "We'll find out who's competitive real fast.", tags: ["nerdy", "cozy", "games", "puzzles"], competitive: true, weather: "in", social: "quiet" },
+  { name: "Bookstore browse + dessert after", where: "Orem / Provo", why: "Pick a book for each other under $10.", tags: ["artsy", "cozy", "books"], weather: "in", social: "quiet" },
+  { name: "Paint-your-own pottery", where: "Utah County", why: "Guaranteed to be terrible at it together.", tags: ["artsy", "cozy", "art"], weather: "in", social: "quiet" },
+  { name: "Movie night + we rate the trailers", where: "a theater or my couch", why: "Strict scoring. No mercy.", tags: ["cozy", "movies", "anime"], weather: "in", social: "quiet" },
+  { name: "Dessert crawl", where: "Provo", why: "Three dessert spots, one official scorecard.", tags: ["foodie", "adventure"], weather: "mix" },
 ];
 
 const FOOD_PICKS = {
@@ -256,10 +247,10 @@ const MEMES = {
   "Dessert. First. Always.": ["brain", ["Dinner, then dessert", "Dessert, then dinner", "Dessert IS dinner"]],
   "Whatever, I'm not picky": ["me", "\"I'm not picky, anywhere is fine\"", "*vetoes 6 restaurants*"],
 
-  "Morning": ["cap", "☕", "but first", "coffee"],
-  "Afternoon": ["cap", "☀️😎", "not too early, not too late", "perfectly balanced"],
-  "Golden hour": ["cap", "🌅📸", "golden hour", "everyone's a model"],
-  "Late night": ["nobody", "My brain at 1am:", "\"let's get food and talk about the universe\" 🌙"],
+
+  "Bundle me up, outside is fine": ["cap", "🥶👍", "it's 30 degrees", "perfect weather honestly"],
+  "Indoors please, I'm basically a lizard": ["drake", "Going outside in November", "Heated buildings 🔥"],
+  "Outside a little, then hot cocoa immediately": ["brain", ["Hot cocoa", "Hot cocoa with marshmallows", "Hot cocoa as a personality"]],
 
   "Dance in it": ["cap", "💃🌧️", "singing in the rain", "but make it chaotic"],
   "Duck into a café for something warm": ["cap", "🌧️☕", "rain outside, cocoa inside", "✨ ambiance ✨"],
@@ -323,13 +314,97 @@ function render(html) {
   window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
 }
 
+/* ---------- the ask ---------- */
+const NO_TEXTS = ["No", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found", "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Still no?", "Yes is right there →"];
+
+function showAsk() {
+  $topbar.hidden = true;
+  render(`
+    <div class="ask">
+      <div class="big-emoji shy">🥺👉👈</div>
+      <p class="eyebrow">An important question</p>
+      <h1>Want to go out with me?</h1>
+      <p class="sub">Again. Date #2. The sequel. Sequels are usually worse, but I promise this one has a bigger budget.</p>
+      <div class="ask-btns">
+        <button class="btn big" id="yes">Yes 💖</button>
+        <button class="btn ghost big" id="no">No</button>
+      </div>
+      <p class="tries" id="tries"></p>
+    </div>`);
+  const yes = document.getElementById("yes");
+  const no = document.getElementById("no");
+  const tries = document.getElementById("tries");
+  let n = 0;
+
+  let last = 0;
+  const dodge = (e) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (Date.now() - last < 250) return; // one tap fires pointerdown + click; count it once
+    last = Date.now();
+    n++;
+    // first dodge: pull the button out so it can roam the whole screen
+    if (no.parentElement !== document.body) {
+      const r = no.getBoundingClientRect();
+      document.body.appendChild(no);
+      no.classList.add("runaway");
+      no.style.left = r.left + "px";
+      no.style.top = r.top + "px";
+    }
+    no.textContent = NO_TEXTS[Math.min(n, NO_TEXTS.length - 1)];
+    const w = no.offsetWidth, h = no.offsetHeight, pad = 16;
+    const px = e && e.clientX !== undefined ? e.clientX : innerWidth / 2;
+    const py = e && e.clientY !== undefined ? e.clientY : innerHeight / 2;
+    const yr = yes.getBoundingClientRect();
+    let x = pad, y = pad;
+    for (let i = 0; i < 30; i++) {
+      x = pad + Math.random() * Math.max(1, innerWidth - w - pad * 2);
+      y = pad + Math.random() * Math.max(1, innerHeight - h - pad * 2);
+      const farFromFinger = Math.hypot(x + w / 2 - px, y + h / 2 - py) > 140;
+      const offYes = x + w < yr.left - 8 || x > yr.right + 8 || y + h < yr.top - 8 || y > yr.bottom + 8;
+      if (farFromFinger && offYes) break;
+    }
+    no.style.left = x + "px";
+    no.style.top = y + "px";
+    yes.style.transform = `scale(${Math.min(1 + n * 0.08, 1.7)})`;
+    tries.textContent = n < 3 ? "" : `Attempts to say no: ${n}. Impressive persistence. Wrong direction, though.`;
+  };
+
+  no.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") dodge(e); });
+  no.addEventListener("pointerdown", dodge);
+  no.addEventListener("click", dodge);
+
+  yes.onclick = () => {
+    no.remove();
+    showYay();
+  };
+}
+
+function showYay() {
+  hearts();
+  const m = document.createElement("div");
+  m.className = "modal-bg";
+  m.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yay">
+      <div class="big-emoji">🥳</div>
+      <h2 id="yay">Yay 💖!</h2>
+      <p>This is the best decision you've ever made.</p>
+      <p class="small">(Second best: agreeing to date #1.)</p>
+      <button class="btn" id="cont">Okay, let's plan it →</button>
+    </div>`;
+  document.body.appendChild(m);
+  const btn = m.querySelector("#cont");
+  btn.focus();
+  btn.onclick = () => { m.remove(); showIntro(); };
+}
+
 /* ---------- intro ---------- */
 function showIntro() {
   $topbar.hidden = true;
   render(`
-    <div class="big-emoji">💌</div>
-    <p class="eyebrow">You've been selected</p>
-    <h1>Let's plan a date.</h1>
+    <div class="big-emoji">📅</div>
+    <p class="eyebrow">Date #2 is officially confirmed</p>
+    <h1>Now let's figure out what we're doing.</h1>
+    <div class="when">🗓️ ${esc(CONFIG.dateLabel)}<br />📍 ${esc(CONFIG.city)}</div>
     <p class="sub">A very official, very scientific quiz. ${QUESTIONS.length} quick questions, no wrong answers. (Okay, a few wrong answers. You'll know them when you see them.)</p>
     <label for="name" class="eyebrow" style="display:block">First things first — what's your name?</label>
     <input id="name" class="field" type="text" maxlength="40" autocomplete="given-name" placeholder="Your name" />
@@ -355,7 +430,7 @@ function showWelcome() {
   render(`
     <div class="big-emoji">${special ? "💖" : "✨"}</div>
     <h1>Hi, ${esc(name)}!</h1>
-    <p class="sub">${special ? "I was really hoping it'd be you." : "Great name. Strong start."} Answer honestly — the results decide our date. No pressure.</p>
+    <p class="sub">${special ? "I was really hoping it'd be you." : "Great name. Strong start."} Answer honestly — the results decide what we do on Tuesday. No pressure.</p>
     <div class="row"><button class="btn" id="go">Start the quiz</button></div>
   `);
   document.getElementById("go").onclick = () => { step = 0; showQuestion(); };
@@ -518,7 +593,9 @@ function pickIdeas(s) {
       if (t in s.scores) score += s.scores[t];
       if (s.interests.includes(t)) score += 3;
     }
-    if (idea.time && s.time) score += idea.time.includes(s.time) ? 2 : -2;
+    if (s.weather === "out") score += idea.weather === "out" ? 3 : 0;
+    if (s.weather === "in") score += idea.weather === "out" ? -4 : 1;
+    if (s.weather === "mix") score += idea.weather === "in" ? 0 : 2;
     if (idea.social && s.social && s.social !== "any") score += idea.social === s.social ? 2 : -2;
     if (idea.competitive && s.competitive) score += 2;
     score += Math.random() * 1.5; // a little variety
@@ -548,7 +625,6 @@ function showResults() {
   const max = Math.max(1, ranked[0][1]);
   const ideas = pickIdeas(s);
   const [foodName, foodWhy] = FOOD_PICKS[s.food || "any"];
-  const where = CONFIG.city ? ` in ${CONFIG.city}` : "";
 
   const summary = [
     `💌 Date quiz results for ${name}`,
@@ -557,7 +633,7 @@ function showResults() {
     ...s.summary.map(([k, v]) => `• ${k}: ${v}`),
     "",
     "Recommended dates:",
-    ...ideas.map((d, i) => `${i + 1}. ${d.name}`),
+    ...ideas.map((d, i) => `${i + 1}. ${d.name} (${d.where})`),
     `🍽️ ${foodName}`,
   ].join("\n");
 
@@ -575,13 +651,13 @@ function showResults() {
       return `<div class="bar-row"><span class="name">${k}</span><span class="bar"><i data-w="${pct}"></i></span><span class="pct">${pct}%</span></div>`;
     }).join("")}</div>
 
-    <div class="section-title">Your perfect dates${esc(where)}</div>
+    <div class="section-title">Date #2 options · ${esc(CONFIG.dateLabel)}</div>
     <div class="ideas">
-      ${ideas.map((d, i) => `<div class="idea"><span class="num">${i + 1}</span><div><b>${esc(d.name)}</b><small>${esc(d.why)}</small></div></div>`).join("")}
+      ${ideas.map((d, i) => `<div class="idea"><span class="num">${i + 1}</span><div><b>${esc(d.name)}</b><small>📍 ${esc(d.where)} · ${esc(d.why)}</small></div></div>`).join("")}
       <div class="idea food"><span class="num">🍽️</span><div><b>${esc(foodName)}</b><small>${esc(foodWhy)}</small></div></div>
     </div>
 
-    <p class="note">Send these to ${esc(CONFIG.myName)} and let the planning begin. No pressure. (A little pressure. ${esc(CONFIG.myName)} is very excited.)</p>
+    <p class="note">Send these to ${esc(CONFIG.myName)} and the plan for Tuesday gets locked in. No pressure. (A little pressure. ${esc(CONFIG.myName)} is very excited.)</p>
     <div class="row">
       <button class="btn" id="text">💬 Send to ${esc(CONFIG.myName)}</button>
       <button class="btn soft" id="copy">Copy results</button>
@@ -642,4 +718,4 @@ function hearts() {
   }
 }
 
-showIntro();
+showAsk();
