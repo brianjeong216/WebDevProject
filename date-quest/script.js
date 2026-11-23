@@ -28,7 +28,7 @@ const SURPRISE = { emo: "🎲", name: "Surprise me", why: "Trust the process. (T
 const OTHER = { emo: "💡", name: "I have a better idea", why: "Tell me. I'm listening. Very open-minded.",
   meme: ["cap", "📝🤓", "new feature request", "has entered the chat"] };
 
-const NO_TEXTS = ["No", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
+const NO_TEXTS = ["No", "Last chance", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
   "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Still no?", "Yes is right there →"];
 
 /* ==========================================================
@@ -65,13 +65,15 @@ function memeHTML(m) {
 function showAsk() {
   render(`
     <div class="ask">
-      <div class="big-emoji shy">🥺👉👈</div>
-      <p class="eyebrow">${CONFIG.herName ? `Hey ${esc(CONFIG.herName)}, an` : "An"} important question</p>
-      <h1>Want to go out with me?</h1>
-      <p class="sub">Again. Date #2. The sequel. Sequels are usually worse, but I promise this one has a bigger budget.</p>
+      <p class="eyebrow">${CONFIG.herName ? `Hey ${esc(CONFIG.herName)}, a` : "A"} small question</p>
+      <h1>Will you go on a second date with me?</h1>
+      <p class="sub">Take your time. There's really only one right answer here.</p>
+      <div class="meme-photo" role="img" aria-label="Meme: me waiting for you to press yes">
+        <span>Me waiting for you</span><span class="cat">🐱</span><span>to press yes</span>
+      </div>
       <div class="ask-btns">
-        <button class="btn big" id="yes">Yes 💖</button>
-        <button class="btn ghost big" id="no">No</button>
+        <button class="btn big" id="yes">♥ Yes, I'd love to</button>
+        <button class="btn no-btn" id="no">No</button>
       </div>
       <p class="tries" id="tries"></p>
     </div>`);

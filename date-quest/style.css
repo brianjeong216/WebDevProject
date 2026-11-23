@@ -1,12 +1,13 @@
 :root {
-  --bg: #fbf6f3;
-  --card: #ffffff;
-  --ink: #2b2230;
-  --muted: #7d7280;
-  --line: #eee4e0;
-  --accent: #e8577a;
-  --accent-soft: #fde8ee;
-  --accent-ink: #b8304f;
+  --bg: #f5e4ee;
+  --card: #fdf9f3;
+  --ink: #3a2a30;
+  --head: #6e1f2c;
+  --muted: #7d6f73;
+  --line: #eee2da;
+  --accent: #c8175d;
+  --accent-soft: #fbe1ec;
+  --accent-ink: #a3164f;
   --green: #2f9e6e;
   --shadow: 0 1px 2px rgba(43, 34, 48, 0.04), 0 12px 32px rgba(232, 87, 122, 0.08);
 }
@@ -18,11 +19,11 @@ html, body { margin: 0; }
 body {
   min-height: 100dvh;
   background:
-    radial-gradient(circle at 15% 0%, #ffe3ea 0, transparent 40%),
-    radial-gradient(circle at 100% 100%, #fff0e0 0, transparent 45%),
+    radial-gradient(circle at 15% 0%, #efd2ea 0, transparent 45%),
+    radial-gradient(circle at 100% 100%, #fbe4e4 0, transparent 50%),
     var(--bg);
   color: var(--ink);
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  font-family: "Nunito", system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   display: flex;
@@ -57,10 +58,11 @@ body {
 }
 @keyframes enter { from { opacity: 0; transform: translateY(8px); } }
 
-.eyebrow { font-size: 13px; font-weight: 500; color: var(--accent-ink); letter-spacing: 0.02em; margin: 0 0 8px; }
+.eyebrow { font-size: 12px; font-weight: 700; color: var(--accent-ink); letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 10px; }
 
 h1, h2 {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--head);
   font-weight: 700;
   line-height: 1.15;
   margin: 0 0 8px;
@@ -124,6 +126,7 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
   cursor: pointer;
   background: var(--accent);
   color: #fff;
+  box-shadow: 0 8px 20px rgba(200, 23, 93, 0.28);
   transition: transform 0.1s, filter 0.15s, opacity 0.2s;
 }
 .btn:hover { filter: brightness(1.05); }
@@ -155,7 +158,7 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
 .range-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
 .range-label {
   text-align: center;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 22px;
   margin: 10px 0 6px;
 }
@@ -335,8 +338,8 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
   padding: 22px 20px 18px;
   text-align: center;
   color: #fff;
-  background: linear-gradient(135deg, #e8577a 0%, #f08a6b 100%);
-  box-shadow: 0 12px 30px rgba(232, 87, 122, 0.3);
+  background: linear-gradient(135deg, #a3164f 0%, #d9467c 100%);
+  box-shadow: 0 12px 30px rgba(163, 22, 79, 0.3);
   animation: meme-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
 }
 .ticket::before, .ticket::after {
@@ -347,8 +350,38 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
 .ticket::after { right: -12px; }
 .t-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; opacity: 0.9; }
 .t-emo { font-size: 52px; margin: 10px 0 4px; }
-.t-name { font-family: "Fraunces", Georgia, serif; font-size: 25px; font-weight: 700; line-height: 1.2; }
+.t-name { font-family: "Playfair Display", Georgia, serif; font-size: 25px; font-weight: 700; line-height: 1.2; }
 .t-when { margin-top: 8px; font-weight: 500; padding-top: 10px; border-top: 2px dashed rgba(255, 255, 255, 0.5); }
 .t-note { margin-top: 8px; font-style: italic; opacity: 0.95; font-size: 15px; }
 .t-fine { margin-top: 12px; font-size: 11.5px; opacity: 0.8; }
 a.btn { display: inline-block; text-decoration: none; }
+
+/* ---------- ask page, reference style ---------- */
+.btn.ghost, .btn.soft { box-shadow: none; }
+.ask h1 { font-weight: 800; letter-spacing: -0.01em; }
+.meme-photo {
+  width: 220px; max-width: 70%;
+  aspect-ratio: 1;
+  margin: 18px auto 4px;
+  border-radius: 12px;
+  border: 5px solid #fff;
+  box-shadow: 0 10px 26px rgba(110, 31, 44, 0.18);
+  transform: rotate(-2deg);
+  background: radial-gradient(circle at 50% 58%, #8a6a4c 0%, #3b2a20 70%, #221813 100%);
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  padding: 10px 8px;
+  color: #fff;
+  font-family: Impact, "Anton", "Arial Black", sans-serif;
+  text-transform: uppercase;
+  font-size: 19px; line-height: 1.05; text-align: center;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  animation: meme-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s both;
+}
+.meme-photo .cat { font-size: 96px; line-height: 1; text-shadow: none; font-family: system-ui, sans-serif; }
+.btn.no-btn {
+  font-size: 13px; font-weight: 600;
+  padding: 9px 18px;
+  background: #fff; color: var(--muted);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 12px rgba(58, 42, 48, 0.1);
+}
