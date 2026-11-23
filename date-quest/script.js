@@ -123,7 +123,7 @@ function showOpener() {
     <div class="ask opener">
       ${screens().opener ? `<p class="eyebrow">${esc(screens().opener.eyebrow)}</p>` : ""}
       <h1>Hey ${esc(CONFIG.herName || "you")},<br />a small question…</h1>
-      <img class="puppy" src="puppy.webp" alt="A very hopeful puppy" width="360" height="480" />
+      <img class="puppy" src="puppy.gif" onerror="this.onerror=null;this.src='puppy.webp'" alt="A very hopeful puppy" width="360" height="480" />
       <div class="row" style="justify-content:center">
         <button class="btn big${screens().opener ? " blink" : ""}" id="what">${esc(screens().opener ? screens().opener.btn : "What is it? 👀")}</button>
       </div>
