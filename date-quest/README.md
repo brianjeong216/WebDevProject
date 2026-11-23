@@ -1,4 +1,4 @@
-# Date #2 invitation 💌
+# Date invitation 💌 (retro arcade style)
 
 1. "Want to go out with me?": the No button runs away.
 2. Yes shows a "Yay 💖! This is the best decision you've ever made." pop-up.

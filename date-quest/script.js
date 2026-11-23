@@ -8,8 +8,7 @@ const CONFIG = {
   herName: "Kayler",
   myPhone: "+14694346426",           // the Send button opens a text to this number
   when: "Tuesday, Nov 24 · 7:00pm",
-  theme: "retro",            // "retro" | "classic" | "mtb" | "ski" | "tri"
-  showThemePicker: true,     // preview switcher at the top; set false before sending
+  theme: "retro",
   // Optional: free key from https://web3forms.com to ALSO get an email when she taps Send.
   web3formsKey: "",
 };
@@ -46,53 +45,8 @@ const THEMES = {
       "Error: 'No' not found", "Respawning…", "Press A for yes", "Cheat code: ↑↑↓↓ YES", "Player 2 can't escape"],
     yay: "⭐",
   },
-  classic: {
-    label: "💌 Classic",
-    eyebrow: "okay, here it is",
-    title: "Will you go on a date with me?",
-    sub: "Take your time. There's really only one right answer here.",
-    meme: ["Me waiting for you", "🐱", "to press yes"],
-    memeImg: "cat-meme.jpg",
-    yes: "♥ Yes, I'd love to",
-    no: ["No", "Last chance", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
-      "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Yes is right there →"],
-    yay: "🥳",
-  },
-  mtb: {
-    label: "🚵 Mountain bike",
-    eyebrow: "trail report",
-    title: "Will you go on a date with me?",
-    sub: "Trail difficulty: green circle. It's an easy yes.",
-    meme: ["Me at the trailhead", "🚵", "waiting for you to press yes"],
-    yes: "🤘 Send it (yes)",
-    no: ["No", "Last chance", "Bail?", "That's a crash 💥", "Walking the bike?", "Wrong line", "Off-trail 🌲",
-      "Endo incoming", "Flat tire 🛞", "Bonk detected", "The trail is → that way", "Just send it 🙃"],
-    yay: "🤘",
-  },
-  ski: {
-    label: "⛷️ Ski",
-    eyebrow: "fresh powder alert",
-    title: "Will you go on a date with me?",
-    sub: "Today's conditions: 100% chance of fun, 0% chance of no.",
-    meme: ["Me at the lift line", "⛷️", "waiting for you to press yes"],
-    yes: "⛷️ Yes, let's send it",
-    no: ["No", "Last chance", "Pizza! 🍕 (stop)", "Yard sale 💥", "Wrong run", "That's a double black ◆◆",
-      "Lift's closed", "Catch the next chair", "Stuck in the tree well 🌲", "French fries → yes", "Just send it 🙃"],
-    yay: "🏂",
-  },
-  tri: {
-    label: "🏊 Triathlon",
-    eyebrow: "race day",
-    title: "Will you go on a date with me?",
-    sub: "Swim. Bike. Run. Say yes. (The 4th discipline.)",
-    meme: ["Me at the finish line", "🏊🚴🏃", "waiting for you to press yes"],
-    yes: "🏁 Yes, I'm in",
-    no: ["No", "Last chance", "DNF?", "Wrong transition", "Drafting penalty 🟨", "Hit the wall 🧱",
-      "Cramp detected", "Course is closed", "Wrong way, finish is →", "Just cross the line 🙃"],
-    yay: "🏅",
-  },
 };
-const theme = () => THEMES[CONFIG.theme] || THEMES.classic;
+const theme = () => THEMES.retro;
 
 /* per-theme screens: pop-up, picker, ticket, final screen, confetti, moving background */
 const THEME_SCREENS = {
@@ -107,48 +61,8 @@ const THEME_SCREENS = {
     confetti: ["⭐", "💖", "🪙", "👾", "✨"],
     ambient: { chars: ["✦", "+", "·", "✧"], dir: "twinkle", count: 46 },
   },
-  classic: {
-    popup: { badge: "", head: "Yay 💖!", extra: "", btn: "Okay, what are we doing? →" },
-    pick: { eyebrow: "🎟️ Date #2", title: "Choose our adventure.", sub: "I have a few ideas. You have final say. (This is called a healthy relationship.)",
-      next: "Lock it in →", badges: [] },
-    ticket: { heading: "Here's your ticket.", left: "ADMIT TWO", right: "DATE #2", fine: "Non-refundable. Non-transferable. Snacks included." },
-    done: { emo: "🕺", head: "Almost there!", bye: "See you Tuesday 💖" },
-    sms: "💌",
-    confetti: ["💖", "💕", "✨", "💌", "🌸"],
-    ambient: { chars: ["♡"], dir: "up", count: 14 },
-  },
-  mtb: {
-    popup: { badge: "TRAIL REPORT", head: "Yay! 💖", extra: "Achievement unlocked: Sent It 🏆", btn: "Drop in →" },
-    pick: { eyebrow: "🗺️ Trail map · Date #2", title: "Pick your line.", sub: "Three trails, one rider who gets the final say (you).",
-      next: "Clip in →", badges: ["🟢 Green", "🟦 Blue", "◆ Black"] },
-    ticket: { heading: "Here's your trail pass.", left: "TRAIL PASS", right: "DATE #2", fine: "Helmet required. Crashes forgiven. Snacks included." },
-    done: { emo: "🏁", head: "Ride's almost done!", bye: "See you at the trailhead Tuesday 🤘" },
-    sms: "🤘",
-    confetti: ["🌲", "🍂", "🤘", "🚵", "💚"],
-    ambient: { chars: ["🍂", "🍁"], dir: "down", count: 12 },
-  },
-  ski: {
-    popup: { badge: "LIFT TICKET · VALID FOR DATE #2", head: "Yay! 💖", extra: "Fresh tracks unlocked ❄️", btn: "Hop on the lift →" },
-    pick: { eyebrow: "🗺️ Run map · Date #2", title: "Pick your run.", sub: "Green, blue, or black diamond. You pick, I follow (slowly).",
-      next: "Ride the lift →", badges: ["🟢 Green", "🟦 Blue", "◆ Black"] },
-    ticket: { heading: "Here's your lift ticket.", left: "LIFT TICKET", right: "DATE #2", fine: "Valid for one (1) epic date. Attach to jacket zipper. 🎿" },
-    done: { emo: "🚡", head: "Almost at the top!", bye: "See you on the slopes Tuesday ⛷️" },
-    sms: "⛷️",
-    confetti: ["❄️", "⛷️", "🏂", "💙", "✨"],
-    ambient: { chars: ["❄"], dir: "down", count: 36 },
-  },
-  tri: {
-    popup: { badge: "OFFICIAL RESULT", head: "Yay! 💖", extra: "New PR: fastest yes ever ⏱️", btn: "On to transition →" },
-    pick: { eyebrow: "🏁 Course selection · Date #2", title: "Choose your event.", sub: "Three courses, no wrong answers. Just one winner (us).",
-      next: "Start the race →", badges: ["Sprint", "Olympic", "Ironman"] },
-    ticket: { heading: "Here's your race bib.", left: "RACE BIB", right: "#002", fine: "Wear on front. No drafting. Snacks at every aid station." },
-    done: { emo: "🏃", head: "Final stretch!", bye: "See you at the start line Tuesday 🏁" },
-    sms: "🏁",
-    confetti: ["🏅", "🏁", "💦", "🚴", "🏃", "🧡"],
-    ambient: { chars: ["○", "◦"], dir: "up", count: 22 },
-  },
 };
-const screens = () => THEME_SCREENS[CONFIG.theme] || THEME_SCREENS.classic;
+const screens = () => THEME_SCREENS.retro;
 
 
 function applyTheme() {
@@ -172,22 +86,6 @@ function applyTheme() {
   document.body.prepend(box);
 }
 
-function themePicker() {
-  if (!CONFIG.showThemePicker || document.getElementById("theme-picker")) return;
-  const bar = document.createElement("div");
-  bar.id = "theme-picker";
-  bar.innerHTML = `<span>Preview theme:</span>` + Object.entries(THEMES)
-    .map(([k, t]) => `<button data-k="${k}">${t.label}</button>`).join("");
-  document.body.prepend(bar);
-  const sync = () => bar.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.k === CONFIG.theme));
-  bar.querySelectorAll("button").forEach((b) => (b.onclick = () => {
-    CONFIG.theme = b.dataset.k;
-    document.querySelectorAll(".runaway, .modal-bg").forEach((n) => n.remove());
-    state.noAttempts = 0; state.pick = null;
-    applyTheme(); sync(); showOpener();
-  }));
-  sync();
-}
 
 /* ==========================================================
    app
@@ -482,5 +380,4 @@ function hearts() {
 }
 
 applyTheme();
-themePicker();
 showOpener();
