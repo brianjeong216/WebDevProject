@@ -18,7 +18,7 @@ const CONFIG = {
                  ["nobody", who, what] · ["me", me, alsoMe] · ["brain", [a, b, c]]  */
 const IDEAS = [
   { emo: "⛸️", name: "Ice skating + dairy-free hot chocolate", why: "I'll hold onto the wall. You hold the cocoa. 100% dairy-free, 0% graceful.",
-    meme: ["cap", "⛸️😬", "me on the ice", "a baby deer, but taller"] },
+    meme: ["brain", ["Ice skating", "Ice skating while holding the wall", "Ice skating while holding your hand"]] },
   { emo: "🕹️", name: "Arcade + dairy-free dessert", why: "Loser buys dessert. Dairy-free, because I pay attention.",
     meme: ["nobody", "Me after winning ONE round of air hockey:", "\"so I'm basically a pro now\" 🕹️"] },
   { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll our own sushi (some will fall apart), then play Zelda. I'm a casual gamer. Please be patient with me.",
