@@ -524,3 +524,4 @@ body:has(#theme-picker) { padding-top: 64px; }
   transform: rotate(-2deg);
   animation: meme-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.1s both;
 }
+.meme-photo.meme-img { display: block; padding: 0; height: auto; object-fit: cover; background: #fff; }

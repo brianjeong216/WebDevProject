@@ -40,6 +40,7 @@ const THEMES = {
     title: "Will you go on a date with me?",
     sub: "Take your time. There's really only one right answer here.",
     meme: ["Me waiting for you", "🐱", "to press yes"],
+    memeImg: "cat-meme.jpg",
     yes: "♥ Yes, I'd love to",
     no: ["No", "Last chance", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
       "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Yes is right there →"],
@@ -215,9 +216,11 @@ function showAsk() {
       <p class="eyebrow">${esc(t.eyebrow)}</p>
       <h1>${esc(t.title)}</h1>
       <p class="sub">${esc(t.sub)}</p>
-      <div class="meme-photo" role="img" aria-label="Meme: ${esc(t.meme[0])} ${esc(t.meme[2])}">
+      ${t.memeImg
+        ? `<img class="meme-photo meme-img" src="${t.memeImg}" alt="Meme: a wide-eyed cat. ${esc(t.meme[0])} ${esc(t.meme[2])}" width="440" height="443" />`
+        : `<div class="meme-photo" role="img" aria-label="Meme: ${esc(t.meme[0])} ${esc(t.meme[2])}">
         <span>${esc(t.meme[0])}</span><span class="cat${[...t.meme[1]].length > 2 ? " multi" : ""}">${t.meme[1]}</span><span>${esc(t.meme[2])}</span>
-      </div>
+      </div>`}
       <div class="ask-btns">
         <button class="btn big" id="yes">${esc(t.yes)}</button>
         <button class="btn no-btn" id="no">No</button>
