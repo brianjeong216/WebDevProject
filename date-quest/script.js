@@ -8,6 +8,9 @@ const CONFIG = {
   herName: "Kayler",
   myPhone: "+14694346426",           // the Send button opens a text to this number
   when: "Tuesday, Nov 24 · 7:00pm",
+  // calendar event (Utah = Mountain Time, UTC-7 in November)
+  eventStart: "2026-11-24T19:00:00-07:00",
+  eventHours: 2,
   theme: "retro",
   // Optional: free key from https://web3forms.com to ALSO get an email when she taps Send.
   web3formsKey: "",
@@ -334,7 +337,12 @@ function showDone() {
       <h1>${esc(screens().done.head)}</h1>
       <p class="sub">Your text to ${esc(CONFIG.myName)} is ready in Messages. Hit send and ${esc(CONFIG.myName)} will begin a very embarrassing happy dance.</p>
       <div class="when">🎟️ ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
-      <p class="sub">Messages didn't open?</p>
+      <p class="sub">💾 Save it to your calendar:</p>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
+        <button class="btn" id="ical">🍎 Apple Calendar</button>
+      </div>
+      <p class="sub" style="margin-top:22px">Messages didn't open?</p>
       <div class="row" style="justify-content:center">
         <a class="btn" href="${esc(smsLink())}">💬 Open Messages</a>
         <button class="btn soft" id="copy">Copy text</button>
@@ -343,11 +351,57 @@ function showDone() {
       <p class="sub" style="margin-top:22px">${esc(screens().done.bye)}</p>
     </div>
   `);
+  document.getElementById("ical").onclick = downloadICS;
   document.getElementById("copy").onclick = async () => {
     document.getElementById("err").textContent = (await copyText(summaryText()))
       ? "Copied! Paste it in a text to " + CONFIG.myName + " 💬"
       : "Couldn't copy. A screenshot works too 📸";
   };
+}
+
+
+/* ---------- calendar ---------- */
+function eventTimes() {
+  const start = new Date(CONFIG.eventStart);
+  const end = new Date(start.getTime() + CONFIG.eventHours * 3600 * 1000);
+  const fmt = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); // 20261125T020000Z
+  return { start: fmt(start), end: fmt(end) };
+}
+const eventTitle = () => `🎮 Date with ${CONFIG.myName}: ${activity()}`;
+const eventDetails = () => [
+  `Quest: ${activity()}`,
+  state.note ? `Note: ${state.note}` : "",
+  `(Player 2 said yes. Tried to press "No" ${state.noAttempts} times.)`,
+].filter(Boolean).join("\n");
+
+function googleCalLink() {
+  const { start, end } = eventTimes();
+  const p = new URLSearchParams({ action: "TEMPLATE", text: eventTitle(), dates: `${start}/${end}`, details: eventDetails(), ctz: "America/Denver" });
+  return `https://calendar.google.com/calendar/render?${p}`;
+}
+
+function downloadICS() {
+  const { start, end } = eventTimes();
+  const escICS = (t) => t.replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const ics = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//date-quest//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:date-quest-${start}@date-quest`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`,
+    `DTSTART:${start}`, `DTEND:${end}`,
+    `SUMMARY:${escICS(eventTitle())}`,
+    `DESCRIPTION:${escICS(eventDetails())}`,
+    "BEGIN:VALARM", "TRIGGER:-PT1H", "ACTION:DISPLAY", "DESCRIPTION:Date in 1 hour 🎮", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR",
+  ].join("\r\n");
+  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "date-with-" + CONFIG.myName.toLowerCase() + ".ics";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
 /* ---------- helpers ---------- */
