@@ -8,7 +8,7 @@ const CONFIG = {
   herName: "Kayler",
   myPhone: "+14694346426",           // the Send button opens a text to this number
   when: "Tuesday, Nov 24 · 7:00pm",
-  theme: "classic",          // "classic" | "mtb" | "ski" | "tri"
+  theme: "retro",            // "retro" | "classic" | "mtb" | "ski" | "tri"
   showThemePicker: true,     // preview switcher at the top; set false before sending
   // Optional: free key from https://web3forms.com to ALSO get an email when she taps Send.
   web3formsKey: "",
@@ -34,6 +34,18 @@ const OTHER = { emo: "💡", name: "I have a better idea", why: "Tell me. I'm li
 
 /* ---------- themes ---------- */
 const THEMES = {
+  retro: {
+    label: "👾 Retro",
+    eyebrow: "⭐ bonus level ⭐",
+    title: "Will you go on a date with me?",
+    sub: "Choose wisely. There's only one correct answer. (No continues.)",
+    meme: ["Me waiting for you", "🐱", "to press yes"],
+    memeImg: "cat-meme.jpg",
+    yes: "♥ Yes, I'd love to",
+    no: ["No", "Last chance", "GAME OVER?", "Insert coin to say no 🪙", "Wrong button combo", "Glitch detected 👾",
+      "Error: 'No' not found", "Respawning…", "Press A for yes", "Cheat code: ↑↑↓↓ YES", "Player 2 can't escape"],
+    yay: "⭐",
+  },
   classic: {
     label: "💌 Classic",
     eyebrow: "okay, here it is",
@@ -84,6 +96,17 @@ const theme = () => THEMES[CONFIG.theme] || THEMES.classic;
 
 /* per-theme screens: pop-up, picker, ticket, final screen, confetti, moving background */
 const THEME_SCREENS = {
+  retro: {
+    opener: { eyebrow: "🎮 Player 2 detected", btn: "▶ Press start" },
+    popup: { badge: "⭐ LEVEL UP! ⭐", head: "Yay! 💖", extra: "+1000 XP · Achievement: Said Yes 🏆", btn: "▶ Continue" },
+    pick: { eyebrow: "🕹️ Select your quest · Date #2", title: "Choose your quest.", sub: "Three quests. One Player 2 (you). Choose wisely.",
+      next: "▶ Start quest", badges: ["⭐ Easy", "⭐⭐ Normal", "⭐⭐⭐ Hard"] },
+    ticket: { heading: "Here's your save file.", left: "SAVE FILE 01", right: "P1 + P2", fine: "Progress saved. Snacks count as power-ups." },
+    done: { emo: "🏆", head: "Quest accepted!", bye: "See you Tuesday, Player 2 💖" },
+    sms: "🎮",
+    confetti: ["⭐", "💖", "🪙", "👾", "✨"],
+    ambient: { chars: ["✦", "+", "·", "✧"], dir: "twinkle", count: 46 },
+  },
   classic: {
     popup: { badge: "", head: "Yay 💖!", extra: "", btn: "Okay, what are we doing? →" },
     pick: { eyebrow: "🎟️ Date #2", title: "Choose our adventure.", sub: "I have a few ideas. You have final say. (This is called a healthy relationship.)",
@@ -140,6 +163,7 @@ function applyTheme() {
     const f = document.createElement("i");
     f.textContent = chars[i % chars.length];
     f.style.left = Math.random() * 100 + "vw";
+    if (dir === "twinkle") f.style.top = Math.random() * 100 + "vh";
     f.style.fontSize = 9 + Math.random() * 13 + "px";
     f.style.animationDuration = 8 + Math.random() * 9 + "s";
     f.style.animationDelay = -Math.random() * 17 + "s";
@@ -199,10 +223,11 @@ function memeHTML(m) {
 function showOpener() {
   render(`
     <div class="ask opener">
+      ${screens().opener ? `<p class="eyebrow">${esc(screens().opener.eyebrow)}</p>` : ""}
       <h1>Hey ${esc(CONFIG.herName || "you")},<br />a small question…</h1>
       <img class="puppy" src="puppy.webp" alt="A very hopeful puppy" width="360" height="480" />
       <div class="row" style="justify-content:center">
-        <button class="btn big" id="what">What is it? 👀</button>
+        <button class="btn big${screens().opener ? " blink" : ""}" id="what">${esc(screens().opener ? screens().opener.btn : "What is it? 👀")}</button>
       </div>
     </div>`);
   document.getElementById("what").onclick = showAsk;
