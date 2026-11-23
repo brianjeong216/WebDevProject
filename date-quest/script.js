@@ -126,8 +126,7 @@ function showYay() {
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yay">
       <div class="big-emoji">🥳</div>
       <h2 id="yay">Yay 💖!</h2>
-      <p>This is the best decision you've ever made.</p>
-      <p class="small">(Second best: agreeing to date #1.)</p>
+      <p class="small" style="font-size:17px;color:var(--ink)">I'm so glad u said yes 🥰</p>
       <button class="btn" id="cont">Okay, what are we doing? →</button>
     </div>`;
   document.body.appendChild(m);
