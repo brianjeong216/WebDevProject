@@ -232,6 +232,73 @@ const ENERGY = [
 ];
 const energyFor = (v) => ENERGY.find(([max]) => v < max);
 
+
+/* ---------- memes (shown when she picks an answer, keyed by answer label) ----------
+   formats:  ["cap", emoji, top text, bottom text]      classic Impact caption
+             ["drake", nah text, yeah text]             two-panel nah / yeah
+             ["nobody", who, what]                      "Nobody: / Me:" tweet
+             ["me", me text, also-me text]              "Me: / Also me:"
+             ["brain", [line1, line2, line3]]           expanding brain        */
+const MEMES = {
+  "Python": ["cap", "🐍", "python devs be like", "it's not slow, it's relaxed"],
+  "JavaScript": ["cap", "🐶☕🔥", "undefined is not a function", "this is fine"],
+  "Rust": ["cap", "🦀", "fought the borrow checker", "and won (barely)"],
+  "HTML": ["drake", "Real programming languages", "<marquee>✨ HTML ✨</marquee>"],
+
+  "Brunch, then wandering somewhere new": ["cap", "🥞", "brunch", "is just breakfast with confidence"],
+  "Blanket, movie, zero regrets": ["nobody", "Me at 3pm on a Saturday:", "*still in pajamas, on episode 6* 🛋️🍿"],
+  "Hike, gym, touch some grass": ["cap", "🌱👆", "touched grass", "achievement unlocked"],
+  "Museum, bookstore, or a random art thing": ["cap", "🖼️🧐", "me at the museum", "*nods like i understand art*"],
+
+  "Tacos": ["drake", "Making a healthy salad", "Tacos. Again. 🌮"],
+  "Sushi": ["cap", "🥢🍣", "me using chopsticks", "like i've trained my whole life"],
+  "Korean BBQ": ["cap", "🥩🔥", "me at korean bbq", "the grill is my IDE"],
+  "Dessert. First. Always.": ["brain", ["Dinner, then dessert", "Dessert, then dinner", "Dessert IS dinner"]],
+  "Whatever, I'm not picky": ["me", "\"I'm not picky, anywhere is fine\"", "*vetoes 6 restaurants*"],
+
+  "Morning": ["cap", "☕", "but first", "coffee"],
+  "Afternoon": ["cap", "☀️😎", "not too early, not too late", "perfectly balanced"],
+  "Golden hour": ["cap", "🌅📸", "golden hour", "everyone's a model"],
+  "Late night": ["nobody", "My brain at 1am:", "\"let's get food and talk about the universe\" 🌙"],
+
+  "Dance in it": ["cap", "💃🌧️", "singing in the rain", "but make it chaotic"],
+  "Duck into a café for something warm": ["cap", "🌧️☕", "rain outside, cocoa inside", "✨ ambiance ✨"],
+  "Pivot to an arcade, bookstore, or museum": ["drake", "Canceling the date", "Speedrunning plan B"],
+  "Complain about the weather together": ["cap", "🐶☕🌧️", "it's pouring", "this is fine"],
+
+  "Just us, somewhere quiet": ["cap", "🕯️🤫", "introverts unite", "separately. in our own space."],
+  "Crowds, events, energy": ["cap", "🎉👀", "more people", "= more people-watching"],
+  "Depends on the vibe": ["cap", "🤔", "\"it depends\"", "— every senior dev ever"],
+
+  "Here to win. At all costs.": ["cap", "🏆😤", "it's just a game", "said no winner ever"],
+  "Here for fun, winning's a bonus": ["cap", "😊🍿", "winning?", "i'm here for the snacks"],
+  "Here for the trash talk": ["nobody", "Me after winning ONE round of mini golf:", "\"gg ez\" 🗣️"],
+  "Cheering from the sidelines": ["cap", "📣", "go team!!", "(i don't know the rules)"],
+
+  "Yes": ["drake", "Pizza without pineapple", "🍍 + 🍕 = 💖"],
+  "Absolutely not": ["cap", "🇮🇹😤", "pineapple on pizza?", "italy has entered the chat"],
+  "I refuse to engage": ["cap", "🙈", "i see nothing", "i say nothing"],
+
+  "With dessert": ["cap", "🍦", "there's always room", "for dessert"],
+  "A long walk and talk": ["cap", "🚶🚶", "\"just one more lap\"", "*3 hours later*"],
+  "\"One more place?\"": ["cap", "👀🌙", "\"one more place?\"", "*it is now 2am*"],
+  "Home by 10": ["cap", "🔋😴", "me at 9:45pm", "social battery: 1%"],
+};
+
+function memeHTML(m) {
+  if (!m) return "";
+  const [t, a, b, c] = m;
+  if (t === "cap") return `<div class="meme cap"><div class="mtop">${esc(b)}</div><div class="memo">${a}</div><div class="mbot">${esc(c)}</div></div>`;
+  if (t === "drake") return `<div class="meme drake">
+      <div class="dr no"><span class="dface">🙅</span><span>${esc(a)}</span></div>
+      <div class="dr yes"><span class="dface">😌👉</span><span>${esc(b)}</span></div></div>`;
+  if (t === "nobody") return `<div class="meme tweet"><div class="who"><span class="av">💌</span><b>Very Real Tweet</b> <span class="handle">@datequiz</span></div>
+      <p>Nobody:</p><p>Absolutely nobody:</p><p>${esc(a)} ${esc(b)}</p></div>`;
+  if (t === "me") return `<div class="meme tweet"><p><b>Me:</b> ${esc(a)}</p><p><b>Also me:</b> ${esc(b)}</p></div>`;
+  if (t === "brain") return `<div class="meme brain">${a.map((line, i) => `<div class="br lvl${i}"><span>${esc(line)}</span><span class="bemo">${["🧠", "🧠✨", "🤯🌌"][i]}</span></div>`).join("")}</div>`;
+  return "";
+}
+
 /* ==========================================================
    app
    ========================================================== */
@@ -328,17 +395,23 @@ function showQuestion() {
           <span class="txt">${esc(o.label)}${o.hint ? `<span class="hint">${esc(o.hint)}</span>` : ""}</span>
         </button>`).join("")}
       </div>
+      <div id="meme"></div>
       <div class="reply" id="reply"></div>${nextBtn}`);
     const btn = document.getElementById("next");
     const reply = document.getElementById("reply");
+    const memeBox = document.getElementById("meme");
     const opts = [...$screen.querySelectorAll(".opt")];
     const select = (i) => {
       answers[step] = i;
       opts.forEach((o, j) => o.classList.toggle("selected", i === j));
       reply.textContent = q.options[i].reply;
+      memeBox.innerHTML = memeHTML(MEMES[q.options[i].label]);
       btn.disabled = false;
     };
-    opts.forEach((o, i) => (o.onclick = () => select(i)));
+    opts.forEach((o, i) => (o.onclick = () => {
+      select(i);
+      setTimeout(() => btn.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" }), 60);
+    }));
     btn.disabled = answers[step] === undefined;
     if (answers[step] !== undefined) select(answers[step]);
     btn.onclick = next;
@@ -458,7 +531,7 @@ function showLoading() {
   $fill.style.width = "100%";
   $count.textContent = "✓";
   $back.disabled = true;
-  render(`<div class="loading"><div class="spinner"></div><h2>Planning your date…</h2><p id="msg"></p></div>`);
+  render(`<div class="loading"><div class="spinner"></div><h2>Planning your date…</h2><p id="msg"></p></div>${memeHTML(["cap", "⏳😬", "me waiting for the results", "please be compatible"])}`);
   const msgs = ["Analyzing your vibe…", "Consulting the snack council…", "Checking the weather (and my charm levels)…", "Almost there…"];
   const msg = document.getElementById("msg");
   let i = 0;
@@ -494,6 +567,7 @@ function showResults() {
     <p class="eyebrow">${esc(name)}, your date type is…</p>
     <h1 class="result-type">${esc(profile.title)}</h1>
     <p class="sub">${esc(profile.desc)}</p>
+    ${memeHTML(["drake", "Swiping through dating apps", `Taking a quiz built just for you`])}
 
     <div class="section-title">Your vibe breakdown</div>
     <div class="bars">${ranked.map(([k, v]) => {

@@ -224,3 +224,58 @@ h2 { font-size: clamp(23px, 5.5vw, 28px); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---------- memes ---------- */
+.meme {
+  margin-top: 18px;
+  border-radius: 14px;
+  overflow: hidden;
+  animation: meme-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+@keyframes meme-in { from { opacity: 0; transform: scale(0.92) rotate(-1.5deg); } }
+
+/* classic Impact caption */
+.meme.cap {
+  background: radial-gradient(circle at 50% 45%, #3a2b45 0%, #1c1622 75%);
+  color: #fff;
+  text-align: center;
+  padding: 14px 14px 16px;
+  font-family: Impact, "Anton", "Arial Black", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+.meme.cap .mtop, .meme.cap .mbot {
+  font-size: clamp(19px, 5.4vw, 25px);
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 0 #000;
+}
+.meme.cap .memo { font-size: 64px; line-height: 1.15; margin: 6px 0; font-family: system-ui, sans-serif; }
+
+/* drake-style nah / yeah */
+.meme.drake { border: 1.5px solid var(--line); display: grid; }
+.meme.drake .dr { display: grid; grid-template-columns: 96px 1fr; align-items: center; min-height: 74px; font-weight: 700; font-size: 16px; }
+.meme.drake .dr + .dr { border-top: 1.5px solid var(--line); }
+.meme.drake .dface { white-space: nowrap; font-size: 30px; text-align: center; align-self: stretch; display: grid; place-items: center; }
+.meme.drake .no .dface { background: #ffe1e1; }
+.meme.drake .yes .dface { background: #dcf5e7; }
+.meme.drake .dr > span:last-child { padding: 10px 14px; }
+.meme.drake .no > span:last-child { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
+
+/* tweet-ish text memes */
+.meme.tweet { border: 1.5px solid var(--line); background: #fff; padding: 14px 16px; font-size: 15.5px; }
+.meme.tweet p { margin: 4px 0; }
+.meme.tweet .who { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 14px; }
+.meme.tweet .av { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); display: grid; place-items: center; }
+.meme.tweet .handle { color: var(--muted); }
+
+/* expanding brain */
+.meme.brain { border: 1.5px solid var(--line); }
+.meme.brain .br { display: grid; grid-template-columns: 1fr 96px; align-items: center; min-height: 60px; font-weight: 700; }
+.meme.brain .br + .br { border-top: 1.5px solid var(--line); }
+.meme.brain .br > span:first-child { padding: 8px 14px; }
+.meme.brain .bemo { white-space: nowrap; text-align: center; font-size: 26px; align-self: stretch; display: grid; place-items: center; }
+.meme.brain .lvl0 .bemo { background: #f1ecf3; }
+.meme.brain .lvl1 .bemo { background: #e6dcff; box-shadow: inset 0 0 18px #b9a3ff; }
+.meme.brain .lvl2 .bemo { background: #1d1440; box-shadow: inset 0 0 26px #c9a6ff; }
+
+.loading + .meme { margin-top: 6px; }
