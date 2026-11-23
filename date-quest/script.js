@@ -21,7 +21,7 @@ const IDEAS = [
     meme: ["brain", ["Ice skating", "Ice skating while holding the wall", "Ice skating while holding your hand"]] },
   { emo: "🕹️", name: "Arcade + dairy-free dessert", why: "Loser buys dessert. Dairy-free, because I pay attention.",
     meme: ["nobody", "Me after winning ONE round of air hockey:", "\"so I'm basically a pro now\" 🕹️"] },
-  { emo: "🍣", name: "Homemade sushi + Zelda", why: "We roll our own sushi (some will fall apart), then play Zelda. I'm a casual gamer. Please be patient with me.",
+  { emo: "🍣", name: "Homemade sushi + Zelda", why: "We make sushi together, then play Zelda. Whoever wins gets the last piece.",
     meme: ["drake", "Paying $40 for sushi", "Making our own sushi (looks bad, tastes great)"] },
   { emo: "💃", name: "Cha cha dance class (YouTube edition)", why: "Our first dance class got cancelled. Round two: YouTube is the teacher now, and YouTube can't cancel on us.",
     meme: ["me", "\"I'll pick it up fast\"", "*watching the tutorial at 0.25x speed, still a beat behind*"] },
