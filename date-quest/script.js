@@ -316,8 +316,7 @@ function decodeSave(str) {
   } catch { return null; }
 }
 function receiptURL() {
-  const data = { q: activity(), e: state.pick.emo, b: pickBadge(), n: state.note || "", x: state.noAttempts, t: Date.now() };
-  return `${location.origin}${location.pathname}?save=${encodeSave(data)}`;
+  return `${location.origin}${location.pathname}?save=${encodeSave(saveData())}`;
 }
 const smsText = () => `${screens().sms} Quest complete! Open my save file 👉 ${receiptURL()}`;
 
@@ -348,49 +347,13 @@ function notifyByEmail() {
 }
 
 /* ---------- 5. quest accepted: calendar + send ---------- */
-function showDone() {
-  hearts();
-  render(`
-    <div class="ask">
-      <div class="big-emoji">${screens().done.emo}</div>
-      <h1>${esc(screens().done.head)}</h1>
-      <div class="when">${state.pick.emo} ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
-      <p class="sub">💾 Save it to your calendar:</p>
-      <div class="row" style="justify-content:center">
-        <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
-        <button class="btn" id="ical">🍎 Apple Calendar</button>
-      </div>
-      <p class="sub" style="margin-top:26px">📨 Final step: send your save file to ${esc(CONFIG.myName)}.</p>
-      <div class="row" style="justify-content:center">
-        <a class="btn big blink" id="send" href="${esc(smsLink())}">${screens().sms} Send to ${esc(CONFIG.myName)}</a>
-      </div>
-      <p class="sub" style="margin-top:14px;font-size:18px">Messages didn't open? <button class="linkish" id="copy">Copy the link instead</button></p>
-      <p class="error" id="err"></p>
-      <p class="sub" style="margin-top:22px">${esc(screens().done.bye)}</p>
-    </div>
-  `);
-  document.getElementById("ical").onclick = downloadICS;
-  document.getElementById("send").addEventListener("click", notifyByEmail);
-  document.getElementById("copy").onclick = async () => {
-    document.getElementById("err").textContent = (await copyText(smsText()))
-      ? "Copied! Paste it in a text to " + CONFIG.myName + " 💬"
-      : "Couldn't copy. A screenshot works too 📸";
-  };
-}
-
-/* ---------- the save file Brian sees when he opens her link ---------- */
-function showReceipt(d) {
-  state.receipt = d;
-  state.note = d.n;
-  state.noAttempts = d.x;
-  state.pick = { emo: d.e };
+function saveCardHTML(d) {
   const done = d.t ? new Date(d.t).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
-  hearts();
-  render(`
-    <div class="ask">
-      <p class="eyebrow">📜 Save file loaded</p>
-      <h1>${esc(CONFIG.herName || "Player 2")} said YES! 🎉</h1>
-      <div class="ticket" style="margin-top:18px">
+  return `
+    <div class="savecard" id="savecard">
+      <p class="eyebrow">📜 Save file</p>
+      <h2>${esc(CONFIG.herName || "Player 2")} said YES! 🎉</h2>
+      <div class="ticket">
         <div class="t-top"><span>SAVE FILE 01</span><span>P1 + P2</span></div>
         <div class="t-emo">${esc(d.e || "🎮")}</div>
         ${d.b ? `<div><span class="diff">${esc(d.b)}</span></div>` : ""}
@@ -399,6 +362,105 @@ function showReceipt(d) {
         ${d.n ? `<div class="t-note">“${esc(d.n)}”</div>` : ""}
         <div class="t-fine">Attempts to press "No": ${Number(d.x) || 0}${Number(d.x) ? " (it ran away 😎)" : " (zero. legend.)"}${done ? `<br />Completed: ${esc(done)}` : ""}</div>
       </div>
+    </div>`;
+}
+const saveData = () => ({ q: activity(), e: state.pick.emo, b: pickBadge(), n: state.note || "", x: state.noAttempts, t: state.doneAt || Date.now() });
+
+let shareFile = null; // screenshot of the save card, prepared before she taps Send
+
+function loadHtml2Canvas() {
+  if (window.html2canvas) return Promise.resolve(window.html2canvas);
+  return new Promise((resolve, reject) => {
+    const sc = document.createElement("script");
+    sc.src = "html2canvas.min.js";
+    sc.onload = () => resolve(window.html2canvas);
+    sc.onerror = reject;
+    document.head.appendChild(sc);
+  });
+}
+
+async function prepareScreenshot() {
+  shareFile = null;
+  try {
+    const h2c = await loadHtml2Canvas();
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const el = document.getElementById("savecard");
+    if (!el) return;
+    const canvas = await h2c(el, { backgroundColor: getComputedStyle(document.documentElement).getPropertyValue("--card").trim() || "#262b44", scale: 2, useCORS: true, logging: false,
+      onclone: (doc) => {
+        const st = doc.createElement("style");
+        st.textContent = "*,*::before,*::after{animation:none!important;transition:none!important}";
+        doc.head.appendChild(st);
+      } });
+    const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+    if (blob) shareFile = new File([blob], `save-file-${(CONFIG.herName || "player2").toLowerCase()}.png`, { type: "image/png" });
+  } catch { shareFile = null; }
+}
+
+function canShareImage() {
+  return !!(shareFile && navigator.canShare && navigator.share && navigator.canShare({ files: [shareFile] }));
+}
+
+async function sendToBrian(e) {
+  notifyByEmail();
+  if (canShareImage()) {
+    e.preventDefault();
+    try {
+      await navigator.share({ files: [shareFile], text: smsText() });
+      document.getElementById("err").textContent = "Sent! ✓ (If you didn't pick Messages, tap Send again.)";
+    } catch (err) {
+      if (err && err.name === "AbortError") return; // she closed the share sheet
+      window.location.href = smsLink();
+    }
+  }
+  // otherwise the button's own sms: link opens Messages addressed to Brian with the save-file link
+}
+
+function showDone() {
+  hearts();
+  state.doneAt = state.doneAt || Date.now();
+  render(`
+    <div class="ask">
+      <div class="big-emoji">${screens().done.emo}</div>
+      <h1>${esc(screens().done.head)}</h1>
+      <p class="sub">💾 Save it to your calendar:</p>
+      <div class="row" style="justify-content:center">
+        <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
+        <button class="btn" id="ical">🍎 Apple Calendar</button>
+      </div>
+      <p class="sub" style="margin-top:26px">📨 Final step: send your save file to ${esc(CONFIG.myName)}.</p>
+      ${saveCardHTML(saveData())}
+      <div class="row" style="justify-content:center;margin-top:22px">
+        <a class="btn big blink" id="send" href="${esc(smsLink())}">${screens().sms} Send to ${esc(CONFIG.myName)}</a>
+      </div>
+      <p class="sub" style="margin-top:14px;font-size:18px">
+        Pick <b>Messages</b> → <b>${esc(CONFIG.myName)}</b> → send.<br />
+        Not working? <a class="linkish" href="${esc(smsLink())}">Text the link instead</a> · <button class="linkish" id="copy">Copy link</button>
+      </p>
+      <p class="error" id="err"></p>
+      <p class="sub" style="margin-top:22px">${esc(screens().done.bye)}</p>
+    </div>
+  `);
+  document.getElementById("ical").onclick = downloadICS;
+  document.getElementById("send").addEventListener("click", sendToBrian);
+  document.getElementById("copy").onclick = async () => {
+    document.getElementById("err").textContent = (await copyText(smsText()))
+      ? "Copied! Paste it in a text to " + CONFIG.myName + " 💬"
+      : "Couldn't copy. A screenshot works too 📸";
+  };
+  prepareScreenshot();
+}
+
+/* ---------- the save file Brian sees when he opens her link ---------- */
+function showReceipt(d) {
+  state.receipt = d;
+  state.note = d.n;
+  state.noAttempts = d.x;
+  state.pick = { emo: d.e };
+  hearts();
+  render(`
+    <div class="ask">
+      ${saveCardHTML(d).replace("📜 Save file", "📜 Save file loaded")}
       <p class="sub" style="margin-top:18px">Add it to your calendar:</p>
       <div class="row" style="justify-content:center">
         <a class="btn" href="${esc(googleCalLink())}" target="_blank" rel="noopener">📅 Google Calendar</a>
