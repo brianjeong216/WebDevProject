@@ -41,7 +41,7 @@ const THEMES = {
   retro: {
     label: "👾 Retro",
     eyebrow: "⭐ bonus level ⭐",
-    title: "Will you go on a date with me?",
+    title: "Will you go on another date with me?",
     sub: "Choose wisely. There's only one correct answer. (No continues.)",
     meme: ["Me waiting for you", "🐱", "to press yes"],
     memeImg: "cat-meme.jpg",
