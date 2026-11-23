@@ -182,19 +182,25 @@ function showAsk() {
       x = pad + Math.random() * Math.max(1, innerWidth - w - pad * 2);
       y = pad + Math.random() * Math.max(1, innerHeight - h - pad * 2);
       const far = Math.hypot(x + w / 2 - px, y + h / 2 - py) > 140;
-      const offYes = x + w < yr.left - 8 || x > yr.right + 8 || y + h < yr.top - 8 || y > yr.bottom + 8;
+      const gap = 48; // keep well clear of the Yes button
+      const offYes = x + w < yr.left - gap || x > yr.right + gap || y + h < yr.top - gap || y > yr.bottom + gap;
       if (far && offYes) break;
     }
     no.style.left = x + "px";
     no.style.top = y + "px";
-    yes.style.transform = `scale(${Math.min(1 + n * 0.08, 1.7)})`;
+    const maxScale = innerWidth < 600 ? 1.15 : 1.5; // phones: grow a little, never into No's old spot
+    yes.style.transform = `scale(${Math.min(1 + n * 0.05, maxScale)})`;
     tries.textContent = n < 3 ? "" : `Attempts to say no: ${n}. Impressive persistence. Wrong direction, though.`;
   };
   no.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") dodge(e); });
   no.addEventListener("pointerdown", dodge);
   no.addEventListener("click", dodge);
 
-  yes.onclick = () => { no.remove(); showYay(); };
+  yes.onclick = () => {
+    if (Date.now() - last < 600) return; // a tap meant for No that landed on Yes doesn't count
+    no.remove();
+    showYay();
+  };
 }
 
 /* ---------- 2. yay ---------- */

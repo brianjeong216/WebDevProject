@@ -532,3 +532,8 @@ a.btn { display: inline-block; text-decoration: none; }
 
 :root[data-theme="retro"] .toast { border-radius: 0; font-family: var(--px); font-size: 10px; }
 :root[data-theme="retro"] .runaway { background: #f4f4f4 !important; color: #1a1c2c !important; }
+
+/* phones: stack Yes and No with plenty of room between them */
+@media (max-width: 600px) {
+  .ask-btns { flex-direction: column; gap: 44px; margin-top: 30px; }
+}
