@@ -81,24 +81,70 @@ const THEMES = {
 };
 const theme = () => THEMES[CONFIG.theme] || THEMES.classic;
 
+/* per-theme screens: pop-up, picker, ticket, final screen, confetti, moving background */
+const THEME_SCREENS = {
+  classic: {
+    popup: { badge: "", head: "Yay 💖!", extra: "", btn: "Okay, what are we doing? →" },
+    pick: { eyebrow: "🎟️ Date #2", title: "Choose our adventure.", sub: "I have a few ideas. You have final say. (This is called a healthy relationship.)",
+      next: "Lock it in →", badges: [] },
+    ticket: { heading: "Here's your ticket.", left: "ADMIT TWO", right: "DATE #2", fine: "Non-refundable. Non-transferable. Snacks included." },
+    done: { emo: "🕺", head: "Almost there!", bye: "See you Tuesday 💖" },
+    sms: "💌",
+    confetti: ["💖", "💕", "✨", "💌", "🌸"],
+    ambient: { chars: ["♡"], dir: "up", count: 14 },
+  },
+  mtb: {
+    popup: { badge: "TRAIL REPORT", head: "Yay! 💖", extra: "Achievement unlocked: Sent It 🏆", btn: "Drop in →" },
+    pick: { eyebrow: "🗺️ Trail map · Date #2", title: "Pick your line.", sub: "Three trails, one rider who gets the final say (you).",
+      next: "Clip in →", badges: ["🟢 Green", "🟦 Blue", "◆ Black"] },
+    ticket: { heading: "Here's your trail pass.", left: "TRAIL PASS", right: "DATE #2", fine: "Helmet required. Crashes forgiven. Snacks included." },
+    done: { emo: "🏁", head: "Ride's almost done!", bye: "See you at the trailhead Tuesday 🤘" },
+    sms: "🤘",
+    confetti: ["🌲", "🍂", "🤘", "🚵", "💚"],
+    ambient: { chars: ["🍂", "🍁"], dir: "down", count: 12 },
+  },
+  ski: {
+    popup: { badge: "LIFT TICKET · VALID FOR DATE #2", head: "Yay! 💖", extra: "Fresh tracks unlocked ❄️", btn: "Hop on the lift →" },
+    pick: { eyebrow: "🗺️ Run map · Date #2", title: "Pick your run.", sub: "Green, blue, or black diamond. You pick, I follow (slowly).",
+      next: "Ride the lift →", badges: ["🟢 Green", "🟦 Blue", "◆ Black"] },
+    ticket: { heading: "Here's your lift ticket.", left: "LIFT TICKET", right: "DATE #2", fine: "Valid for one (1) epic date. Attach to jacket zipper. 🎿" },
+    done: { emo: "🚡", head: "Almost at the top!", bye: "See you on the slopes Tuesday ⛷️" },
+    sms: "⛷️",
+    confetti: ["❄️", "⛷️", "🏂", "💙", "✨"],
+    ambient: { chars: ["❄"], dir: "down", count: 36 },
+  },
+  tri: {
+    popup: { badge: "OFFICIAL RESULT", head: "Yay! 💖", extra: "New PR: fastest yes ever ⏱️", btn: "On to transition →" },
+    pick: { eyebrow: "🏁 Course selection · Date #2", title: "Choose your event.", sub: "Three courses, no wrong answers. Just one winner (us).",
+      next: "Start the race →", badges: ["Sprint", "Olympic", "Ironman"] },
+    ticket: { heading: "Here's your race bib.", left: "RACE BIB", right: "#002", fine: "Wear on front. No drafting. Snacks at every aid station." },
+    done: { emo: "🏃", head: "Final stretch!", bye: "See you at the start line Tuesday 🏁" },
+    sms: "🏁",
+    confetti: ["🏅", "🏁", "💦", "🚴", "🏃", "🧡"],
+    ambient: { chars: ["○", "◦"], dir: "up", count: 22 },
+  },
+};
+const screens = () => THEME_SCREENS[CONFIG.theme] || THEME_SCREENS.classic;
+
+
 function applyTheme() {
   document.documentElement.dataset.theme = CONFIG.theme;
-  document.querySelectorAll(".snow").forEach((n) => n.remove());
-  if (CONFIG.theme === "ski" && !reduceMotion) {
-    const snow = document.createElement("div");
-    snow.className = "snow";
-    snow.setAttribute("aria-hidden", "true");
-    for (let i = 0; i < 36; i++) {
-      const f = document.createElement("i");
-      f.textContent = "❄";
-      f.style.left = Math.random() * 100 + "vw";
-      f.style.fontSize = 8 + Math.random() * 12 + "px";
-      f.style.animationDuration = 7 + Math.random() * 8 + "s";
-      f.style.animationDelay = -Math.random() * 15 + "s";
-      snow.appendChild(f);
-    }
-    document.body.prepend(snow);
+  document.querySelectorAll(".ambient").forEach((n) => n.remove());
+  if (reduceMotion) return;
+  const { chars, dir, count } = screens().ambient;
+  const box = document.createElement("div");
+  box.className = `ambient ${dir}`;
+  box.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < count; i++) {
+    const f = document.createElement("i");
+    f.textContent = chars[i % chars.length];
+    f.style.left = Math.random() * 100 + "vw";
+    f.style.fontSize = 9 + Math.random() * 13 + "px";
+    f.style.animationDuration = 8 + Math.random() * 9 + "s";
+    f.style.animationDelay = -Math.random() * 17 + "s";
+    box.appendChild(f);
   }
+  document.body.prepend(box);
 }
 
 function themePicker() {
@@ -213,11 +259,13 @@ function showYay() {
   const m = document.createElement("div");
   m.className = "modal-bg";
   m.innerHTML = `
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yay">
+    <div class="modal modal-${CONFIG.theme}" role="dialog" aria-modal="true" aria-labelledby="yay">
+      ${screens().popup.badge ? `<div class="m-badge">${esc(screens().popup.badge)}</div>` : ""}
       <div class="big-emoji">${theme().yay}</div>
-      <h2 id="yay">Yay 💖!</h2>
+      <h2 id="yay">${esc(screens().popup.head)}</h2>
       <p class="small" style="font-size:17px;color:var(--ink)">I'm so glad u said yes 🥰</p>
-      <button class="btn" id="cont">Okay, what are we doing? →</button>
+      ${screens().popup.extra ? `<p class="m-extra">${esc(screens().popup.extra)}</p>` : ""}
+      <button class="btn" id="cont">${esc(screens().popup.btn)}</button>
     </div>`;
   document.body.appendChild(m);
   const btn = m.querySelector("#cont");
@@ -229,13 +277,13 @@ function showYay() {
 function showPick() {
   const all = [...IDEAS, SURPRISE, OTHER];
   render(`
-    <p class="eyebrow">🎟️ Date #2 · ${esc(CONFIG.when)}</p>
-    <h2>Choose our adventure.</h2>
-    <p class="sub">I have a few ideas. You have final say. (This is called a healthy relationship.)</p>
+    <p class="eyebrow">${esc(screens().pick.eyebrow)} · ${esc(CONFIG.when)}</p>
+    <h2>${esc(screens().pick.title)}</h2>
+    <p class="sub">${esc(screens().pick.sub)}</p>
     <div class="options">${all.map((o, i) => `
       <button class="opt" data-i="${i}">
         <span class="emo">${o.emo}</span>
-        <span class="txt">${esc(o.name)}<span class="hint">${esc(o.why)}</span></span>
+        <span class="txt">${screens().pick.badges[i] ? `<span class="diff">${esc(screens().pick.badges[i])}</span>` : ""}${esc(o.name)}<span class="hint">${esc(o.why)}</span></span>
       </button>`).join("")}
     </div>
     <div id="other-wrap" hidden>
@@ -244,7 +292,7 @@ function showPick() {
     <div id="meme"></div>
     <label class="eyebrow" for="note" style="display:block;margin-top:22px">Anything I should know? (optional)</label>
     <textarea id="note" class="field" rows="2" maxlength="300" placeholder="When you get off work, cravings, hot takes…"></textarea>
-    <div class="row end"><button class="btn" id="next" disabled>Lock it in →</button></div>
+    <div class="row end"><button class="btn" id="next" disabled>${esc(screens().pick.next)}</button></div>
   `);
   const opts = [...$screen.querySelectorAll(".opt")];
   const btn = document.getElementById("next");
@@ -283,18 +331,18 @@ const activity = () => (state.pick === OTHER ? state.otherIdea : state.pick.name
 function showTicket() {
   render(`
     <p class="eyebrow">Almost done</p>
-    <h2>Here's your ticket.</h2>
-    <div class="ticket">
-      <div class="t-top"><span>ADMIT TWO</span><span>DATE #2</span></div>
+    <h2>${esc(screens().ticket.heading)}</h2>
+    <div class="ticket ticket-${CONFIG.theme}">
+      <div class="t-top"><span>${esc(screens().ticket.left)}</span><span>${esc(screens().ticket.right)}</span></div>
       <div class="t-emo">${state.pick.emo}</div>
       <div class="t-name">${esc(activity())}</div>
       <div class="t-when">${esc(CONFIG.when)}</div>
       ${state.note ? `<div class="t-note">“${esc(state.note)}”</div>` : ""}
-      <div class="t-fine">Non-refundable. Non-transferable. Snacks included.</div>
+      <div class="t-fine">${esc(screens().ticket.fine)}</div>
     </div>
     <p class="sub" style="margin-top:18px">Tap below and a text to ${esc(CONFIG.myName)} pops up, already written. Just hit send. ${esc(CONFIG.myName)} will act cool about it. ${esc(CONFIG.myName)} will not be cool about it.</p>
     <div class="row">
-      <button class="btn" id="send">💌 Send to ${esc(CONFIG.myName)}</button>
+      <button class="btn" id="send">${screens().sms} Send to ${esc(CONFIG.myName)}</button>
       <button class="btn ghost" id="back">← Change pick</button>
     </div>
     <p class="error" id="err"></p>
@@ -305,7 +353,7 @@ function showTicket() {
 
 function summaryText() {
   return [
-    `💌 I said YES to date #2!`,
+    `${screens().sms} I said YES to date #2!`,
     ``,
     `When: ${CONFIG.when}`,
     `We're doing: ${activity()}`,
@@ -341,8 +389,8 @@ function showDone() {
   hearts();
   render(`
     <div class="ask">
-      <div class="big-emoji">🕺</div>
-      <h1>Almost there!</h1>
+      <div class="big-emoji">${screens().done.emo}</div>
+      <h1>${esc(screens().done.head)}</h1>
       <p class="sub">Your text to ${esc(CONFIG.myName)} is ready in Messages. Hit send and ${esc(CONFIG.myName)} will begin a very embarrassing happy dance.</p>
       <div class="when">🎟️ ${esc(activity())}<br />🗓️ ${esc(CONFIG.when)}</div>
       <p class="sub">Messages didn't open?</p>
@@ -351,7 +399,7 @@ function showDone() {
         <button class="btn soft" id="copy">Copy text</button>
       </div>
       <p class="error" id="err"></p>
-      <p class="sub" style="margin-top:22px">See you Tuesday 💖</p>
+      <p class="sub" style="margin-top:22px">${esc(screens().done.bye)}</p>
     </div>
   `);
   document.getElementById("copy").onclick = async () => {
@@ -379,7 +427,7 @@ async function copyText(text) {
 
 function hearts() {
   if (reduceMotion) return;
-  const emojis = ["💖", "💕", "✨", "💌", "🌸"];
+  const emojis = screens().confetti;
   for (let i = 0; i < 24; i++) {
     const h = document.createElement("div");
     h.className = "heart";
