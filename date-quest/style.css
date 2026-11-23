@@ -385,3 +385,71 @@ a.btn { display: inline-block; text-decoration: none; }
   border: 1px solid var(--line);
   box-shadow: 0 4px 12px rgba(58, 42, 48, 0.1);
 }
+
+/* ---------- themes ---------- */
+.ticket { background: linear-gradient(135deg, var(--accent-ink) 0%, var(--accent) 100%) !important; }
+.meme-photo .cat { white-space: nowrap; }
+
+:root[data-theme="mtb"] {
+  --bg: #e6e8dc; --card: #fbf8f1; --ink: #2e2a22; --head: #2f4a2b; --muted: #706a5c;
+  --line: #e7e1d3; --accent: #d0611c; --accent-soft: #f8e4d4; --accent-ink: #9a4410;
+}
+:root[data-theme="ski"] {
+  --bg: #e3eef8; --card: #fbfdff; --ink: #1d2a3a; --head: #12355b; --muted: #627388;
+  --line: #dde7f1; --accent: #1f6fd8; --accent-soft: #e1ecfb; --accent-ink: #164f9c;
+}
+:root[data-theme="tri"] {
+  --bg: #fff0e2; --card: #fffdf9; --ink: #1f2a33; --head: #0b3d5c; --muted: #6c727a;
+  --line: #f1e5d8; --accent: #f2600c; --accent-soft: #ffe7d6; --accent-ink: #b8460a;
+}
+:root[data-theme="mtb"] body {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 300V170l130-90 90 60 160-120 140 110 110-70 170 130 120-80 140 90 140-80v180z' fill='%23b9c4a6'/%3E%3Cpath d='M0 300V230l170-70 150 60 180-90 160 90 140-50 170 70 230-80v140z' fill='%2393a37f'/%3E%3C/svg%3E") bottom / 100% 32vh no-repeat fixed,
+    radial-gradient(circle at 80% 0%, #f6dcc3 0, transparent 45%),
+    var(--bg);
+}
+:root[data-theme="ski"] body {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'%3E%3Cpath d='M0 300V160l180-120 120 80 170-110 160 140 130-60 190 120 130-70 120 60v300z' fill='%23c9dcef'/%3E%3Cpath d='M180 40l-40 27 25 6 15-12 18 14 22-8zM470 10l-45 30 25 5 20-14 22 16 20-10z' fill='%23fff'/%3E%3Cpath d='M0 300V240l200-50 220 40 200-60 220 50 360-40v120z' fill='%23fff'/%3E%3C/svg%3E") bottom / 100% 30vh no-repeat fixed,
+    radial-gradient(circle at 20% 0%, #d1e4f7 0, transparent 50%),
+    var(--bg);
+}
+:root[data-theme="tri"] body {
+  background:
+    repeating-linear-gradient(180deg, transparent 0 46px, rgba(11, 61, 92, 0.07) 46px 50px) bottom / 100% 26vh no-repeat fixed,
+    radial-gradient(circle at 85% 0%, #ffd9bd 0, transparent 45%),
+    radial-gradient(circle at 0% 100%, #d4ecf5 0, transparent 45%),
+    var(--bg);
+}
+:root[data-theme="mtb"] .meme-photo { background: radial-gradient(circle at 50% 58%, #6f8a55 0%, #2f3f24 75%); }
+:root[data-theme="ski"] .meme-photo { background: radial-gradient(circle at 50% 58%, #7fb0e0 0%, #1d3f66 75%); }
+:root[data-theme="tri"] .meme-photo { background: radial-gradient(circle at 50% 58%, #3fa6c9 0%, #0b3d5c 75%); }
+
+.snow { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.snow i { position: absolute; top: -20px; color: #fff; text-shadow: 0 0 4px rgba(31, 111, 216, 0.35); font-style: normal; animation: snowfall linear infinite; }
+@keyframes snowfall { to { transform: translateY(105vh) translateX(30px); } }
+.shell { position: relative; z-index: 2; }
+
+/* preview-only theme switcher */
+#theme-picker {
+  position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 60;
+  display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; overflow-x: auto;
+  max-width: calc(100vw - 20px);
+  background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(6px);
+  border: 1px solid var(--line); border-radius: 16px; padding: 6px 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); font-size: 13px;
+}
+#theme-picker span { color: var(--muted); font-weight: 700; padding: 0 4px; }
+#theme-picker button {
+  font: inherit; font-weight: 700; border: 1px solid var(--line); background: #fff; color: var(--ink);
+  border-radius: 99px; padding: 5px 10px; cursor: pointer;
+}
+#theme-picker button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+#theme-picker button { white-space: nowrap; flex: none; }
+body:has(#theme-picker) { padding-top: 64px; }
+@media (max-width: 600px) {
+  #theme-picker { font-size: 12px; padding: 5px 6px; }
+  #theme-picker span { display: none; }
+  #theme-picker button { padding: 5px 8px; }
+}
+.meme-photo .cat.multi { font-size: 54px; letter-spacing: -4px; }

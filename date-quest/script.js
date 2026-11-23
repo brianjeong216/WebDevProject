@@ -8,6 +8,8 @@ const CONFIG = {
   herName: "Kayler",
   myPhone: "+14694346426",           // the Send button opens a text to this number
   when: "Tuesday, Nov 24 · 7:00pm",
+  theme: "classic",          // "classic" | "mtb" | "ski" | "tri"
+  showThemePicker: true,     // preview switcher at the top; set false before sending
   // Optional: free key from https://web3forms.com to ALSO get an email when she taps Send.
   web3formsKey: "",
 };
@@ -28,8 +30,93 @@ const SURPRISE = { emo: "🎲", name: "Surprise me", why: "Trust the process. (T
 const OTHER = { emo: "💡", name: "I have a better idea", why: "Tell me. I'm listening. Very open-minded.",
   meme: ["cap", "📝🤓", "new feature request", "has entered the chat"] };
 
-const NO_TEXTS = ["No", "Last chance", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
-  "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Still no?", "Yes is right there →"];
+
+
+/* ---------- themes ---------- */
+const THEMES = {
+  classic: {
+    label: "💌 Classic",
+    eyebrow: "a small question",
+    title: "Will you go on a second date with me?",
+    sub: "Take your time. There's really only one right answer here.",
+    meme: ["Me waiting for you", "🐱", "to press yes"],
+    yes: "♥ Yes, I'd love to",
+    no: ["No", "Last chance", "Are you sure?", "Really sure?", "Think again 🤔", "Wrong button", "Error 404: 'No' not found",
+      "Nice try", "Can't catch me 😜", "Just press yes 🙃", "I'll wait…", "Yes is right there →"],
+    yay: "🥳",
+  },
+  mtb: {
+    label: "🚵 Mountain bike",
+    eyebrow: "trail report: a small question",
+    title: "Will you shred a second date with me?",
+    sub: "Trail difficulty: green circle. It's an easy yes.",
+    meme: ["Me at the trailhead", "🚵", "waiting for you to press yes"],
+    yes: "🤘 Send it (yes)",
+    no: ["No", "Last chance", "Bail?", "That's a crash 💥", "Walking the bike?", "Wrong line", "Off-trail 🌲",
+      "Endo incoming", "Flat tire 🛞", "Bonk detected", "The trail is → that way", "Just send it 🙃"],
+    yay: "🤘",
+  },
+  ski: {
+    label: "⛷️ Ski",
+    eyebrow: "fresh powder alert: a small question",
+    title: "Will you go on a second date with me?",
+    sub: "Today's conditions: 100% chance of fun, 0% chance of no.",
+    meme: ["Me at the lift line", "⛷️", "waiting for you to press yes"],
+    yes: "⛷️ Yes, let's send it",
+    no: ["No", "Last chance", "Pizza! 🍕 (stop)", "Yard sale 💥", "Wrong run", "That's a double black ◆◆",
+      "Lift's closed", "Catch the next chair", "Stuck in the tree well 🌲", "French fries → yes", "Just send it 🙃"],
+    yay: "🏂",
+  },
+  tri: {
+    label: "🏊 Triathlon",
+    eyebrow: "race day: a small question",
+    title: "Will you go on a second date with me?",
+    sub: "Swim. Bike. Run. Say yes. (The 4th discipline.)",
+    meme: ["Me at the finish line", "🏊🚴🏃", "waiting for you to press yes"],
+    yes: "🏁 Yes, I'm in",
+    no: ["No", "Last chance", "DNF?", "Wrong transition", "Drafting penalty 🟨", "Hit the wall 🧱",
+      "Cramp detected", "Course is closed", "Wrong way, finish is →", "Just cross the line 🙃"],
+    yay: "🏅",
+  },
+};
+const theme = () => THEMES[CONFIG.theme] || THEMES.classic;
+
+function applyTheme() {
+  document.documentElement.dataset.theme = CONFIG.theme;
+  document.querySelectorAll(".snow").forEach((n) => n.remove());
+  if (CONFIG.theme === "ski" && !reduceMotion) {
+    const snow = document.createElement("div");
+    snow.className = "snow";
+    snow.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 36; i++) {
+      const f = document.createElement("i");
+      f.textContent = "❄";
+      f.style.left = Math.random() * 100 + "vw";
+      f.style.fontSize = 8 + Math.random() * 12 + "px";
+      f.style.animationDuration = 7 + Math.random() * 8 + "s";
+      f.style.animationDelay = -Math.random() * 15 + "s";
+      snow.appendChild(f);
+    }
+    document.body.prepend(snow);
+  }
+}
+
+function themePicker() {
+  if (!CONFIG.showThemePicker || document.getElementById("theme-picker")) return;
+  const bar = document.createElement("div");
+  bar.id = "theme-picker";
+  bar.innerHTML = `<span>Preview theme:</span>` + Object.entries(THEMES)
+    .map(([k, t]) => `<button data-k="${k}">${t.label}</button>`).join("");
+  document.body.prepend(bar);
+  const sync = () => bar.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.k === CONFIG.theme));
+  bar.querySelectorAll("button").forEach((b) => (b.onclick = () => {
+    CONFIG.theme = b.dataset.k;
+    document.querySelectorAll(".runaway, .modal-bg").forEach((n) => n.remove());
+    state.noAttempts = 0; state.pick = null;
+    applyTheme(); sync(); showAsk();
+  }));
+  sync();
+}
 
 /* ==========================================================
    app
@@ -63,16 +150,17 @@ function memeHTML(m) {
 
 /* ---------- 1. the ask ---------- */
 function showAsk() {
+  const t = theme();
   render(`
     <div class="ask">
-      <p class="eyebrow">${CONFIG.herName ? `Hey ${esc(CONFIG.herName)}, a` : "A"} small question</p>
-      <h1>Will you go on a second date with me?</h1>
-      <p class="sub">Take your time. There's really only one right answer here.</p>
-      <div class="meme-photo" role="img" aria-label="Meme: me waiting for you to press yes">
-        <span>Me waiting for you</span><span class="cat">🐱</span><span>to press yes</span>
+      <p class="eyebrow">${CONFIG.herName ? `Hey ${esc(CONFIG.herName)}, ` : ""}${esc(t.eyebrow)}</p>
+      <h1>${esc(t.title)}</h1>
+      <p class="sub">${esc(t.sub)}</p>
+      <div class="meme-photo" role="img" aria-label="Meme: ${esc(t.meme[0])} ${esc(t.meme[2])}">
+        <span>${esc(t.meme[0])}</span><span class="cat${[...t.meme[1]].length > 2 ? " multi" : ""}">${t.meme[1]}</span><span>${esc(t.meme[2])}</span>
       </div>
       <div class="ask-btns">
-        <button class="btn big" id="yes">♥ Yes, I'd love to</button>
+        <button class="btn big" id="yes">${esc(t.yes)}</button>
         <button class="btn no-btn" id="no">No</button>
       </div>
       <p class="tries" id="tries"></p>
@@ -94,7 +182,7 @@ function showAsk() {
       no.style.left = r.left + "px";
       no.style.top = r.top + "px";
     }
-    no.textContent = NO_TEXTS[Math.min(n, NO_TEXTS.length - 1)];
+    no.textContent = theme().no[Math.min(n, theme().no.length - 1)];
     const w = no.offsetWidth, h = no.offsetHeight, pad = 16;
     const px = e && e.clientX !== undefined ? e.clientX : innerWidth / 2;
     const py = e && e.clientY !== undefined ? e.clientY : innerHeight / 2;
@@ -126,7 +214,7 @@ function showYay() {
   m.className = "modal-bg";
   m.innerHTML = `
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="yay">
-      <div class="big-emoji">🥳</div>
+      <div class="big-emoji">${theme().yay}</div>
       <h2 id="yay">Yay 💖!</h2>
       <p class="small" style="font-size:17px;color:var(--ink)">I'm so glad u said yes 🥰</p>
       <button class="btn" id="cont">Okay, what are we doing? →</button>
@@ -304,4 +392,6 @@ function hearts() {
   }
 }
 
+applyTheme();
+themePicker();
 showAsk();
