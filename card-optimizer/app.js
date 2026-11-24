@@ -383,7 +383,10 @@
 
   // ---------- UI: comparison table ----------
   function renderTable() {
-    const list = state.onlyMine && state.wallet.length ? cards.filter((c) => inWallet(c.id)) : cards;
+    // Your cards first, in the order you arranged them; everything else after.
+    const mineList = state.wallet.map((id) => cardById[id]);
+    const others = state.onlyMine && mineList.length ? [] : cards.filter((c) => !inWallet(c.id));
+    const list = [...mineList, ...others];
     const showValue = $("#show-value").checked;
     const cols = categories;
     const cell = (c, cat) => {
@@ -393,8 +396,15 @@
     // best per column
     const bests = cols.map((cat) => Math.max(...list.map((c) => evaluate(c, { category: cat.id }).value)));
     let html = `<table class="matrix"><thead><tr><th class="sticky">Card</th>${cols.map((c) => `<th title="${esc(c.label)}"><span>${c.icon}</span>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>`;
-    list.forEach((c) => {
-      html += `<tr class="${inWallet(c.id) ? "mine" : ""}"><th class="sticky"><span class="dot" style="background:${c.color[1]}"></span>${esc(fullName(c))}<small>${c.fee ? "$" + c.fee : "$0"} · ${c.currency === "CASH" ? "cash" : esc(c.currency)}</small></th>`;
+    const groupRow = (label) => `<tr class="group"><th class="sticky">${label}</th><td colspan="${cols.length}"></td></tr>`;
+    list.forEach((c, idx) => {
+      if (mineList.length && idx === 0) html += groupRow(`Your cards <small>Use ▲ ▼ to reorder</small>`);
+      if (mineList.length && idx === mineList.length) html += groupRow("Other cards");
+      const mine = idx < mineList.length;
+      const mover = mine
+        ? `<span class="move"><button data-move="${c.id}" data-dir="-1" aria-label="Move ${esc(fullName(c))} up" ${idx === 0 ? "disabled" : ""}>▲</button><button data-move="${c.id}" data-dir="1" aria-label="Move ${esc(fullName(c))} down" ${idx === mineList.length - 1 ? "disabled" : ""}>▼</button></span>`
+        : "";
+      html += `<tr class="${mine ? "mine" : ""}"><th class="sticky"><div class="name-cell">${mover}<div><span class="dot" style="background:${c.color[1]}"></span>${esc(fullName(c))}<small>${c.fee ? "$" + c.fee : "$0"} · ${c.currency === "CASH" ? "cash" : esc(c.currency)}</small></div></div></th>`;
       cols.forEach((cat, i) => {
         const { r, text } = cell(c, cat);
         const isBase = r.why === "base rate";
@@ -483,6 +493,19 @@
 
     $("#only-mine").addEventListener("change", (e) => { state.onlyMine = e.target.checked; save(); renderTable(); });
     $("#show-value").addEventListener("change", renderTable);
+    $("#table-wrap").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-move]");
+      if (!b) return;
+      const i = state.wallet.indexOf(b.dataset.move);
+      const j = i + Number(b.dataset.dir);
+      if (i < 0 || j < 0 || j >= state.wallet.length) return;
+      [state.wallet[i], state.wallet[j]] = [state.wallet[j], state.wallet[i]];
+      save();
+      renderTable();
+      const again = document.querySelector(`[data-move="${b.dataset.move}"][data-dir="${b.dataset.dir}"]:not(:disabled)`)
+        || document.querySelector(`[data-move="${b.dataset.move}"]:not(:disabled)`);
+      if (again) again.focus();
+    });
 
     $("#panel-settings").addEventListener("input", (e) => {
       if (e.target.dataset.cpp) {
