@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>You've got mail ✉️</title>
+  <meta name="description" content="A very official invitation. Tap to open." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://brianjeong216.github.io/WebDevProject/invite/" />
+  <meta property="og:title" content="✉️ You've got mail, Kayler" />
+  <meta property="og:description" content="A very official invitation. Tap to open." />
+  <meta property="og:image" content="https://brianjeong216.github.io/WebDevProject/invite/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#14213a" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✉️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+  <div class="lights" aria-hidden="true"></div>
+  <div class="snow" aria-hidden="true"></div>
+
+  <main class="stage">
+    <section class="intro" id="intro">
+      <p class="kicker">You've got mail</p>
+      <h1>For Kayler ✉️</h1>
+
+      <button class="envelope" id="envelope" aria-label="Open the envelope">
+        <span class="env-back"></span>
+        <span class="peek" id="peek">
+          <span class="peek-line">Dear Kayler,</span>
+          <span class="peek-bar"></span><span class="peek-bar short"></span>
+        </span>
+        <span class="env-pocket"></span>
+        <span class="env-flap"></span>
+        <span class="seal">❄</span>
+      </button>
+
+      <p class="tap" id="tap">Tap the envelope to open</p>
+    </section>
+
+    <article class="letter" id="letter" hidden aria-live="polite"></article>
+  </main>
+
+  <script src="script.js?v=2"></script>
+</body>
+</html>
