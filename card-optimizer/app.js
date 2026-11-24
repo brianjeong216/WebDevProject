@@ -14,6 +14,7 @@
     rotating: { cff: [], discover: [] },
     customCash: "dining",
     onlyMine: false,
+    autoLocate: false,
   });
   function load() {
     try {
@@ -179,12 +180,13 @@
     box._list = list;
   }
 
-  function selectTarget(t) {
+  function selectTarget(t, opts = {}) {
     currentTarget = t;
+    if (!t.auto) loc.manualAt = loc.pos; // a manual choice wins until you move away
     renderSuggestions([]);
     document.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", t.type === "category" && c.dataset.cat === t.category));
     renderResults();
-    $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (opts.scroll !== false) $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function earnText(r, amount) {
@@ -224,7 +226,7 @@
     const best = ranked[0];
 
     let html = `<div class="res-head">
-      <div><div class="res-label">${cat.icon} ${esc(cat.label)}</div><h2>${esc(title)}</h2></div>
+      <div><div class="res-label">${t.auto ? "📍 Detected · " : ""}${cat.icon} ${esc(cat.label)}</div><h2>${esc(title)}</h2></div>
     </div>`;
 
     if (!mine.length) {
@@ -257,6 +259,7 @@
 
     html += `<h3 class="sub">${mine.length ? "All your cards" : "All cards"}, ranked</h3><ol class="ranked">${ranked.map((r, i) => resultRow(r, i, amount)).join("")}</ol>`;
     $("#results-body").innerHTML = html;
+    if (state.autoLocate) renderAutoStatus();
   }
 
   // ---------- location ----------
@@ -309,55 +312,166 @@
       .slice(0, 12);
   }
 
-  async function findNearby() {
-    const box = $("#nearby");
-    box.hidden = false;
-    if (!navigator.geolocation) { box.innerHTML = `<p class="muted">Your browser doesn't support location.</p>`; return; }
-    box.innerHTML = `<p class="muted">📍 Finding where you are…</p>`;
-    let pos;
-    try {
-      pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }));
-    } catch (e) {
-      box.innerHTML = `<p class="muted">Couldn't get your location${e && e.code === 1 ? " (permission denied)" : ""}. Try typing the store name instead.</p>`;
-      return;
-    }
-    const { latitude: lat, longitude: lon } = pos.coords;
-    box.innerHTML = `<p class="muted">🔎 Looking for stores and restaurants near you…</p>`;
-    const r = 150;
+  // ---------- auto location ----------
+  const OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  const REQUERY_METERS = 60;      // look up places again after moving this far
+  const MANUAL_HOLD_METERS = 150; // a manual pick sticks until you move this far
+  const loc = { watchId: null, status: "off", error: "", pos: null, lastQuery: null, busy: false, places: [], detected: null, manualAt: null, showList: false };
+
+  async function fetchPlaces(lat, lon) {
+    const r = 120;
     const query = `[out:json][timeout:15];(
       nwr(around:${r},${lat},${lon})["name"]["shop"];
       nwr(around:${r},${lat},${lon})["name"]["amenity"];
       nwr(around:${r},${lat},${lon})["name"]["tourism"];
       nwr(around:${r},${lat},${lon})["name"]["leisure"];
     );out center 60;`;
-    try {
-      const resp = await fetch("https://overpass-api.de/api/interpreter", {
-        method: "POST",
-        body: "data=" + encodeURIComponent(query),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      const data = await resp.json();
-      const places = placesFromOsm(data.elements || [], lat, lon);
-      renderNearby(places);
-    } catch (e) {
-      box.innerHTML = `<p class="muted">Couldn't look up nearby places right now. Try typing the store name instead.</p>`;
+    let lastErr;
+    for (const url of OVERPASS) {
+      try {
+        const resp = await fetch(url, {
+          method: "POST",
+          body: "data=" + encodeURIComponent(query),
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        return placesFromOsm(data.elements || [], lat, lon);
+      } catch (e) { lastErr = e; }
     }
+    throw lastErr;
   }
 
-  function renderNearby(places) {
-    const box = $("#nearby");
-    if (!places.length) {
-      box.innerHTML = `<p class="muted">No stores found right around you. Try typing the name instead.</p>`;
+  // Nearest place wins, with a small boost for stores we know by name.
+  function bestGuess(places) {
+    return places.slice().sort((a, b) => (a.dist - (a.merchant ? 15 : 0)) - (b.dist - (b.merchant ? 15 : 0)))[0] || null;
+  }
+
+  function startAuto() {
+    if (!navigator.geolocation) { loc.status = "error"; loc.error = "This browser can't share your location."; renderAutoStatus(); return; }
+    if (loc.watchId != null) return;
+    loc.status = loc.detected ? "found" : "locating";
+    renderAutoStatus();
+    loc.watchId = navigator.geolocation.watchPosition(onPosition, onPositionError, { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 });
+  }
+
+  function stopAuto() {
+    if (loc.watchId != null) navigator.geolocation.clearWatch(loc.watchId);
+    loc.watchId = null;
+  }
+
+  function setAuto(on) {
+    state.autoLocate = on;
+    save();
+    if (on) { loc.lastQuery = null; startAuto(); }
+    else { stopAuto(); loc.status = "off"; loc.showList = false; renderAutoStatus(); }
+  }
+
+  function onPositionError(e) {
+    if (loc.detected && e.code !== 1) return; // keep the last answer on a passing GPS hiccup
+    loc.status = "error";
+    loc.error = e.code === 1
+      ? "Location is blocked for this site. Allow it in your browser's site settings, then tap Try again."
+      : "Couldn't get your location. Tap Try again, or search below.";
+    if (e.code === 1) stopAuto();
+    renderAutoStatus();
+  }
+
+  async function onPosition(pos) {
+    const here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    loc.pos = here;
+    const q = loc.lastQuery;
+    if (loc.busy) return;
+    if (q && distance(q.lat, q.lon, here.lat, here.lon) < REQUERY_METERS) return;
+    loc.busy = true;
+    if (!loc.detected) { loc.status = "searching"; renderAutoStatus(); }
+    try {
+      loc.places = await fetchPlaces(here.lat, here.lon);
+      loc.lastQuery = here;
+    } catch (e) {
+      loc.busy = false;
+      if (!loc.detected) { loc.status = "error"; loc.error = "Couldn't look up nearby places. Check your connection and tap Try again."; renderAutoStatus(); }
       return;
     }
-    box._places = places;
-    box.innerHTML = `<div class="nearby-head">Places near you <button class="link" id="close-nearby">close</button></div>` +
-      places.map((p, i) => {
+    loc.busy = false;
+    const guess = bestGuess(loc.places);
+    if (!guess) { loc.detected = null; loc.status = "none"; renderAutoStatus(); renderNearby(); return; }
+
+    const heldByManual = loc.manualAt && distance(loc.manualAt.lat, loc.manualAt.lon, here.lat, here.lon) < MANUAL_HOLD_METERS;
+    if (heldByManual) { renderNearby(); return; }
+    loc.manualAt = null;
+    loc.detected = guess;
+    loc.status = "found";
+    applyPlace(guess, true);
+  }
+
+  function applyPlace(p, auto) {
+    const input = $("#search");
+    input.value = p.name;
+    selectTarget({ type: "place", label: p.name, merchant: p.merchant, category: p.category, auto }, { scroll: false });
+  }
+
+  function renderAutoStatus() {
+    const box = $("#auto-status");
+    const btn = $("#near-me");
+    const on = !!state.autoLocate;
+    btn.setAttribute("aria-pressed", on);
+    btn.classList.toggle("on", on);
+    btn.textContent = on ? "📍 Auto: on" : "📍 Auto-detect";
+
+    if (!on) {
+      box.innerHTML = `<div class="auto off"><span>📍</span><div><b>Let the app figure out where you are</b><small>Turn on auto-detect and it will recommend a card for the store you're in, every time you open it.</small></div><button class="btn small" data-auto="on">Turn on</button></div>`;
+      return;
+    }
+    if (loc.status === "locating" || loc.status === "searching") {
+      box.innerHTML = `<div class="auto busy"><span class="pulse">📍</span><div><b>${loc.status === "locating" ? "Finding where you are…" : "Looking for stores around you…"}</b><small>This takes a few seconds.</small></div></div>`;
+      return;
+    }
+    if (loc.status === "error") {
+      box.innerHTML = `<div class="auto warn"><span>⚠️</span><div><b>Auto-detect paused</b><small>${esc(loc.error)}</small></div><button class="btn small" data-auto="retry">Try again</button></div>`;
+      return;
+    }
+    if (loc.status === "none") {
+      box.innerHTML = `<div class="auto"><span>📍</span><div><b>No store detected right here</b><small>Search below or tap a category. It'll keep checking as you move.</small></div></div>`;
+      return;
+    }
+    const pickedByHand = currentTarget && currentTarget.type === "place" && !currentTarget.auto;
+    const p = pickedByHand
+      ? { name: currentTarget.label, merchant: currentTarget.merchant, category: currentTarget.category, dist: (loc.places.find((x) => x.name === currentTarget.label) || {}).dist }
+      : loc.detected;
+    if (!p) { box.innerHTML = ""; return; }
+    const mine = cards.filter((c) => inWallet(c.id));
+    const best = rank(mine.length ? mine : cards, { merchant: p.merchant, category: p.category }).find((r) => !r.unusable);
+    const cat = catById[p.category];
+    const distText = p.dist != null && p.dist < 1000 ? ` · ${Math.round(p.dist)} m away` : "";
+    box.innerHTML = `<div class="auto found">
+      <div class="auto-top">
+        <span>${cat.icon}</span>
+        <div><small>${pickedByHand ? "You picked" : "You're at"}</small><b>${esc(p.name)}</b><small>${esc(cat.label)}${distText}</small></div>
+        <button class="link" data-auto="list">${loc.showList ? "Hide list" : "Not here?"}</button>
+      </div>
+      ${best ? `<div class="auto-answer">Use <b>${esc(fullName(best.card))}</b><span>${multLabel(best.card, best.rate)} · ${fmtPct(best.value)} back</span></div>` : `<div class="auto-answer">None of your cards are accepted here.</div>`}
+    </div>`;
+    renderNearby();
+  }
+
+  function renderNearby() {
+    const box = $("#nearby");
+    if (!state.autoLocate || !loc.showList || !loc.places.length) { box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = `<div class="nearby-head">Places near you</div>` +
+      loc.places.map((p, i) => {
         const cat = catById[p.category];
-        return `<button class="suggestion" data-place="${i}"><span class="s-icon">${cat.icon}</span><span><b>${esc(p.name)}</b><small>${esc(cat.label)} · ${p.dist < 1000 ? Math.round(p.dist) + " m" : "nearby"}</small></span></button>`;
+        const active = currentTarget && currentTarget.label === p.name;
+        return `<button class="suggestion${active ? " active" : ""}" data-place="${i}"><span class="s-icon">${cat.icon}</span><span><b>${esc(p.name)}</b><small>${esc(cat.label)} · ${p.dist < 1000 ? Math.round(p.dist) + " m" : "nearby"}</small></span></button>`;
       }).join("");
   }
+
+  document.addEventListener("visibilitychange", () => {
+    if (!state.autoLocate) return;
+    if (document.hidden) stopAuto();
+    else startAuto(); // reopening the app checks where you are again
+  });
 
   // ---------- UI: wallet ----------
   function renderWallet() {
@@ -462,14 +576,22 @@
       input.value = "";
       selectTarget({ type: "category", category: b.dataset.cat });
     });
-    $("#near-me").addEventListener("click", findNearby);
+    $("#near-me").addEventListener("click", () => setAuto(!state.autoLocate));
+    $("#auto-status").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-auto]");
+      if (!b) return;
+      const action = b.dataset.auto;
+      if (action === "on") setAuto(true);
+      if (action === "retry") { stopAuto(); loc.lastQuery = null; startAuto(); }
+      if (action === "list") { loc.showList = !loc.showList; renderAutoStatus(); }
+    });
     $("#nearby").addEventListener("click", (e) => {
-      if (e.target.id === "close-nearby") { $("#nearby").hidden = true; return; }
       const b = e.target.closest("[data-place]");
       if (!b) return;
-      const p = $("#nearby")._places[+b.dataset.place];
-      input.value = p.name;
-      selectTarget({ type: "place", label: p.name, merchant: p.merchant, category: p.category });
+      const p = loc.places[+b.dataset.place];
+      loc.showList = false;
+      applyPlace(p, false);
+      loc.manualAt = loc.pos;
     });
     $("#amount").addEventListener("input", renderResults);
     $("#results").addEventListener("click", (e) => {
@@ -540,7 +662,9 @@
   let startTab = state.wallet.length ? "where" : "wallet";
   try { startTab = sessionStorage.getItem("co-tab") || startTab; } catch (e) { /* ignore */ }
   setTab(startTab);
+  renderAutoStatus();
+  if (state.autoLocate) startAuto();
 
   // Exposed for testing in the console.
-  window.CardOptimizer = { evaluate, rank, searchTargets, placesFromOsm, matchMerchantByName, get state() { return state; } };
+  window.CardOptimizer = { evaluate, rank, searchTargets, placesFromOsm, matchMerchantByName, bestGuess, get state() { return state; } };
 })();
