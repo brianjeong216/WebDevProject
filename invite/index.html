@@ -8,7 +8,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://brianjeong216.github.io/WebDevProject/invite/" />
   <meta property="og:title" content="✉️ You've got mail, Kayler" />
-  <meta property="og:description" content="A very official invitation. Tap to open." />
+  <meta property="og:description" content="A quick survey, then a very official invitation." />
   <meta property="og:image" content="https://brianjeong216.github.io/WebDevProject/invite/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -18,14 +18,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
   <div class="lights" aria-hidden="true"></div>
   <div class="snow" aria-hidden="true"></div>
 
   <main class="stage">
-    <section class="intro" id="intro">
+    <section class="survey" id="survey" aria-live="polite"></section>
+
+    <section class="intro" id="intro" hidden>
       <button class="envelope" id="envelope" aria-label="Open the envelope">
         <span class="env-back"></span>
         <span class="peek" id="peek">
@@ -43,6 +45,6 @@
     <article class="letter" id="letter" hidden aria-live="polite"></article>
   </main>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>
