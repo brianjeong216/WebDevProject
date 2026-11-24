@@ -184,3 +184,4 @@ h1 { margin: 0 0 34px; font-family: "Caveat", cursive; font-weight: 700; font-si
 
 /* once the letter is open, start it near the top instead of centering */
 .stage.reading { justify-content: flex-start; }
+.intro[hidden] { display: none; }
