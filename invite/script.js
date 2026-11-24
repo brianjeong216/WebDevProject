@@ -7,7 +7,7 @@ const INVITE = {
   myName: "Brian",
   myPhone: "+14694346426",
   when: "Tonight · Tuesday, Nov 24",
-  pickup: "6:15 PM",
+  pickup: "6:30 PM",
   pickupWhere: "your place",
 };
 
@@ -55,9 +55,10 @@ function letterHTML() {
       <div class="row"><span class="ic">🗓️</span><span><b>When</b>${esc(INVITE.when)}</span></div>
       <div class="row"><span class="ic">🚗</span><span><b>Pickup</b>${esc(INVITE.pickup)} at ${esc(INVITE.pickupWhere)}</span></div>
       <div class="row"><span class="ic">📍</span><span><b>Where</b><span class="classified">top secret place</span><small>(classified)</small></span></div>
+      <div class="row"><span class="ic">🌙</span><span><b>Tonight's forecast</b>Chilly: 37° at 7 PM, dropping to about 34° by 10 PM. Partly cloudy, barely any wind.</span></div>
       <div class="row"><span class="ic">🧣</span><span><b>Dress code</b>Cozy and warm: a good coat, gloves, a beanie, and your warmest socks. Wear something you can move around in.</span></div>
       <div class="row"><span class="ic">✨</span><span><b>Also</b>Look cute. (Easy for you.)</span></div>
-      <div class="row"><span class="ic">🍫</span><span><b>Come hungry</b>Save room for delicious treats.</span></div>
+      <div class="row"><span class="ic">🍫</span><span><b>Save room</b>For some delicious treats.</span></div>
     </div>
 
     <p class="sign">See you soon,<br />${esc(INVITE.myName)}</p>
@@ -89,6 +90,7 @@ env.addEventListener("click", () => {
     intro.hidden = true;
     letter.innerHTML = letterHTML();
     letter.hidden = false;
+    document.querySelector(".stage").classList.add("reading");
     window.scrollTo({ top: 0, behavior: "auto" });
     document.getElementById("again").onclick = reset;
   }, 2150 * t);
@@ -97,6 +99,7 @@ env.addEventListener("click", () => {
 function reset() {
   opened = false;
   letter.hidden = true;
+  document.querySelector(".stage").classList.remove("reading");
   intro.hidden = false;
   env.classList.remove("opening", "pulling");
   intro.classList.remove("opening");
