@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pick the credit card that earns the most points for every purchase.">
+  <meta name="theme-color" content="#0f172a">
+  <title>Card Optimizer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💳</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="brand">
+        <a class="back" href="../index.html" aria-label="Back to home">←</a>
+        <div>
+          <h1>Card Optimizer</h1>
+          <p>Which card should I use here?</p>
+        </div>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button class="tab" data-tab="where">📍 Where</button>
+        <button class="tab" data-tab="wallet">👛 My Wallet</button>
+        <button class="tab" data-tab="all">📊 All Cards</button>
+        <button class="tab" data-tab="settings">⚙️ Settings</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- WHERE ARE YOU -->
+    <section class="panel" id="panel-where">
+      <div class="search-wrap">
+        <div class="search-row">
+          <input id="search" type="search" placeholder="Where are you? e.g. Costco, Starbucks, gas" autocomplete="off" aria-label="Store or category">
+          <button id="near-me" class="btn">📍 Near me</button>
+        </div>
+        <div id="suggestions" class="dropdown" hidden></div>
+      </div>
+      <div id="nearby" class="dropdown static" hidden></div>
+
+      <div id="chips" class="chips"></div>
+
+      <div id="results" hidden>
+        <label class="amount">Purchase amount (optional) <span>$<input id="amount" type="number" min="0" step="0.01" placeholder="0.00" inputmode="decimal"></span></label>
+        <div id="results-body"></div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section class="panel" id="panel-wallet" hidden>
+      <div class="panel-head">
+        <h2 id="wallet-count">Tap the cards you have</h2>
+        <input id="wallet-filter" type="search" placeholder="Filter cards…" aria-label="Filter cards">
+      </div>
+      <div id="wallet-grid" class="wallet-grid"></div>
+    </section>
+
+    <!-- ALL CARDS -->
+    <section class="panel" id="panel-all" hidden>
+      <div class="panel-head">
+        <h2>Every card, every category</h2>
+        <div class="toggles">
+          <label><input type="checkbox" id="only-mine"> Only my cards</label>
+          <label><input type="checkbox" id="show-value"> Show as % value</label>
+        </div>
+      </div>
+      <p class="muted small">Highlighted = best in that category. Faded = the card's base rate. Rotating/custom 5% categories follow your Settings.</p>
+      <div id="table-wrap" class="table-wrap"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="panel" id="panel-settings" hidden>
+      <h2>Point values</h2>
+      <p class="muted small">How many cents you think one point is worth. Used to compare points cards against cash back. 1.5¢ is a conservative value for transferable points; use 1¢ if you only redeem for cash.</p>
+      <div id="cpp-list" class="cpp-list"></div>
+
+      <h2>Rotating 5% categories</h2>
+      <p class="muted small">Check the categories that are active this quarter (and that you've activated).</p>
+      <div id="rotating"></div>
+
+      <h2>Citi Custom Cash</h2>
+      <p class="muted small">Your top spending category earns 5% (up to $500 per billing cycle).</p>
+      <select id="custom-cash" aria-label="Citi Custom Cash category"></select>
+
+      <h2>Reset</h2>
+      <button id="reset" class="btn danger">Reset wallet & settings</button>
+    </section>
+
+    <footer class="foot muted small">
+      Rates are based on public issuer info as of 2026 and can change; always check your card's terms.
+      Nearby places come from © OpenStreetMap contributors. Your wallet is saved only in this browser.
+    </footer>
+  </main>
+
+  <script src="cards.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
