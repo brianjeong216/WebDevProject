@@ -167,7 +167,7 @@ function showLetter() {
       <div class="row"><span class="ic">🚗</span><span><b>Pickup</b>${esc(INVITE.pickup)} at ${esc(INVITE.pickupWhere)}</span></div>
       <div class="row"><span class="ic">📍</span><span><b>Where</b><span class="classified">top secret place</span><small>(classified)</small></span></div>
       <div class="row"><span class="ic">🌙</span><span><b>Tonight's forecast</b>Chilly, with temps in the 30s all night.</span></div>
-      <div class="row"><span class="ic">🧣</span><span><b>Dress code</b>Cozy and warm: a good coat, gloves, a beanie, and your warmest socks. Wear something you can move around in.</span></div>
+      <div class="row"><span class="ic">🧣</span><span><b>Dress code</b>Cozy and warm, something you can move in.</span></div>
       <div class="row"><span class="ic">✨</span><span><b>Also</b>Look cute. (Easy for you.)</span></div>
       <div class="row"><span class="ic">🍫</span><span><b>Treats</b>Save some room for treats.</span></div>
     </div>
