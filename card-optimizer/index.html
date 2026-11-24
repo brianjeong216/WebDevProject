@@ -31,10 +31,11 @@
   <main class="wrap">
     <!-- WHERE ARE YOU -->
     <section class="panel" id="panel-where">
+      <div id="auto-status" aria-live="polite"></div>
       <div class="search-wrap">
         <div class="search-row">
           <input id="search" type="search" placeholder="Where are you? e.g. Costco, Starbucks, gas" autocomplete="off" aria-label="Store or category">
-          <button id="near-me" class="btn">📍 Near me</button>
+          <button id="near-me" class="btn" aria-pressed="false">📍 Auto-detect</button>
         </div>
         <div id="suggestions" class="dropdown" hidden></div>
       </div>
